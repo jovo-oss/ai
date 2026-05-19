@@ -1,0 +1,496 @@
+================================================================================
+                        AI聊天系统 - 使用说明
+                    版本: 1.0.0 | 更新日期: 2026-05-19
+================================================================================
+
+目录
+----
+1. 系统简介
+2. 环境要求
+3. 快速开始（第一次使用）
+4. 如何配置API密钥
+5. 如何启动系统
+6. 如何使用聊天界面
+7. 如何创建自己的插件
+8. 如何创建自己的脚本
+9. API接口说明
+10. 常见问题解答
+11. 项目结构说明
+
+================================================================================
+1. 系统简介
+================================================================================
+
+这是一个可扩展的AI聊天系统，具有以下特点：
+
+✓ 类似微信的聊天界面
+✓ AI智能对话（基于GPT-4o）
+✓ 语音合成播放（文字转语音）
+✓ 插件系统 - 轻松扩展功能
+✓ 脚本系统 - 执行自定义任务
+✓ 用户记忆管理
+✓ 数据库存储聊天记录
+
+================================================================================
+2. 环境要求
+================================================================================
+
+- Python 3.8 或更高版本
+- Windows / macOS / Linux 系统
+- OpenAI API密钥（用于AI对话和语音合成）
+- 网络连接（调用API需要）
+
+================================================================================
+3. 快速开始（第一次使用）
+================================================================================
+
+步骤1：安装依赖包
+-----------------
+打开PyCharm终端，运行以下命令：
+
+    cd c:\Trae\PyCharm_\ai_chat_system\backend
+    pip install -r requirements.txt
+
+等待安装完成，你会看到"Successfully installed"的提示。
+
+
+步骤2：配置API密钥
+------------------
+编辑 backend\.env 文件，填入你的OpenAI API密钥：
+
+    OPENAI_API_KEY=你的API密钥
+
+如何获取API密钥：
+- 访问 https://platform.openai.com
+- 注册账号
+- 在API Keys页面创建新密钥
+
+
+步骤3：启动后端服务
+-------------------
+在PyCharm终端中运行：
+
+    cd c:\Trae\PyCharm_\ai_chat_system\backend
+    C:\Trae\PyCharm_\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8001
+
+看到以下提示说明启动成功：
+
+    INFO:     Uvicorn running on http://0.0.0.0:8001
+    INFO:     Application startup complete.
+
+注意：如果端口8001被占用，可以换成其他端口，如8002、8003等
+
+
+步骤4：打开前端界面
+-------------------
+在浏览器中打开这个文件：
+
+    c:\Trae\PyCharm_\ai_chat_system\frontend\index.html
+
+或者直接双击这个文件。
+
+================================================================================
+4. 如何配置API密钥
+================================================================================
+
+打开文件：backend\.env
+
+当前系统使用 DeepSeek API（与 OpenAI SDK 兼容，成本更低）
+
+你需要配置以下内容：
+
+    # DeepSeek API密钥（必需）
+    DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+
+    # DeepSeek 模型（可选）
+    # 可选值：deepseek-v4-flash, deepseek-v4-pro
+    DEEPSEEK_MODEL=deepseek-v4-flash
+
+    # TTS语音合成密钥（可选，如需语音功能请填OpenAI密钥）
+    TTS_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+
+    # 语音类型（可选，默认nova）
+    # 可选值：alloy, echo, fable, onyx, nova, shimmer
+    TTS_VOICE=nova
+
+    # 服务器端口（可选，默认8001）
+    PORT=8001
+
+如何获取 DeepSeek API 密钥：
+- 访问 https://platform.deepseek.com
+- 注册账号
+- 在 API Keys 页面创建新密钥
+
+注意：
+- API密钥以 sk- 开头
+- 不要把这个文件分享给别人
+- 如果密钥错误，系统会报错
+
+================================================================================
+5. 如何启动系统
+================================================================================
+
+方法1：使用命令行
+-----------------
+1. 打开PyCharm终端
+2. 进入backend目录：
+   cd c:\Trae\PyCharm_\ai_chat_system\backend
+3. 启动服务：
+   python -m app.main
+4. 看到"Uvicorn running"提示后，打开浏览器访问前端
+
+方法2：在PyCharm中运行
+----------------------
+1. 在PyCharm中打开 backend/app/main.py
+2. 右键点击文件
+3. 选择"Run 'main'"
+4. 服务启动后，打开前端页面
+
+停止服务：
+- 在终端中按 Ctrl+C
+
+================================================================================
+6. 如何使用聊天界面
+================================================================================
+
+基本操作：
+---------
+1. 在输入框中输入消息
+2. 按回车键或点击"发送"按钮
+3. 等待AI回复（通常1-3秒）
+4. 点击"播放语音"按钮可以听AI朗读回复
+
+界面说明：
+---------
+- 右侧紫色气泡：你发送的消息
+- 左侧白色气泡：AI的回复
+- 底部输入框：输入消息的地方
+- 播放语音按钮：点击播放AI回复的语音
+
+提示：
+- 支持中文和英文对话
+- AI会记住之前的聊天内容
+- 语音播放需要网络连接
+
+================================================================================
+7. 如何创建自己的插件
+================================================================================
+
+什么是插件？
+-----------
+插件是在特定事件发生时自动执行的代码。例如：
+- 用户发送消息时
+- 用户登录时
+- AI回复时
+
+创建步骤：
+---------
+
+步骤1：在 plugins 目录创建Python文件
+例如：plugins/my_plugin.py
+
+步骤2：编写插件代码
+-------------------
+复制以下模板：
+
+    from app.plugins.plugin_base import BasePlugin
+    from typing import Any, Dict, Optional
+
+    class MyPlugin(BasePlugin):
+        def __init__(self):
+            super().__init__()
+            self.metadata.name = "MyPlugin"
+            self.metadata.version = "1.0.0"
+            self.metadata.description = "我的插件描述"
+            self.metadata.author = "你的名字"
+        
+        async def on_message_received(self, message: str, user_id: str):
+            """当收到用户消息时执行"""
+            print(f"收到消息: {message}")
+            # 你的逻辑代码
+            return None
+        
+        async def on_message_sent(self, message: str, user_id: str):
+            """当AI发送回复时执行"""
+            print(f"AI回复: {message}")
+            # 你的逻辑代码
+
+步骤3：重启后端服务
+-------------------
+插件会在系统启动时自动加载。
+
+插件可用事件：
+-------------
+- on_message_received(message, user_id)
+  用户发送消息时触发
+
+- on_message_sent(message, user_id)
+  AI发送回复时触发
+
+- on_user_login(user_id)
+  用户登录时触发
+
+- execute(context)
+  手动执行插件
+
+示例：自动回复插件
+-----------------
+    class AutoReplyPlugin(BasePlugin):
+        async def on_message_received(self, message: str, user_id: str):
+            if "你好" in message:
+                return {
+                    "type": "auto_reply",
+                    "message": "你好！很高兴见到你！"
+                }
+            return None
+
+================================================================================
+8. 如何创建自己的脚本
+================================================================================
+
+什么是脚本？
+-----------
+脚本是可以手动或定时执行的任务。例如：
+- 清理旧数据
+- 导出聊天记录
+- 批量处理任务
+
+创建步骤：
+---------
+
+步骤1：在 scripts 目录创建Python文件
+例如：scripts/my_script.py
+
+步骤2：编写脚本代码
+-------------------
+复制以下模板：
+
+    from app.scripts.script_base import BaseScript
+    from typing import Any, Dict
+
+    class MyScript(BaseScript):
+        def __init__(self):
+            super().__init__()
+            self.name = "MyScript"
+            self.description = "我的脚本描述"
+        
+        async def run(self, args: Dict[str, Any] = None) -> Dict[str, Any]:
+            """执行脚本"""
+            try:
+                # 你的逻辑代码
+                result = "执行成功"
+                
+                return {
+                    "success": True,
+                    "message": result,
+                    "data": {}
+                }
+            except Exception as e:
+                return {
+                    "success": False,
+                    "error": str(e)
+                }
+
+    # 允许直接运行这个脚本
+    if __name__ == "__main__":
+        import asyncio
+        script = MyScript()
+        result = asyncio.run(script.run())
+        print(result)
+
+步骤3：运行脚本
+--------------
+方法1：直接运行
+    python scripts/my_script.py
+
+方法2：通过API调用
+    POST http://localhost:8000/api/scripts/run
+    {
+        "script_name": "my_script",
+        "args": {}
+    }
+
+示例：导出聊天记录脚本
+---------------------
+    class ExportChatScript(BaseScript):
+        async def run(self, args=None):
+            user_id = args.get("user_id", 1)
+            # 从数据库读取聊天记录
+            # 导出为JSON文件
+            return {
+                "success": True,
+                "exported_file": "chat_history.json"
+            }
+
+================================================================================
+9. API接口说明
+================================================================================
+
+基础地址：http://localhost:8000
+
+1. 发送消息
+-----------
+POST /api/chat/send
+
+请求体：
+{
+    "user_id": 1,
+    "message": "你好",
+    "enable_tts": true,
+    "voice": "nova"
+}
+
+响应：
+{
+    "success": true,
+    "reply": "你好！有什么可以帮助你的？",
+    "audio_base64": "base64编码的音频数据"
+}
+
+
+2. 获取聊天历史
+--------------
+GET /api/chat/history/{user_id}?limit=50
+
+响应：
+{
+    "success": true,
+    "messages": [
+        {
+            "role": "user",
+            "content": "你好",
+            "created_at": "2026-05-19T10:00:00"
+        }
+    ]
+}
+
+
+3. 列出所有插件
+--------------
+GET /api/plugins
+
+响应：
+{
+    "success": true,
+    "plugins": {
+        "WelcomePlugin": {
+            "version": "1.0.0",
+            "description": "新用户欢迎消息插件",
+            "enabled": true
+        }
+    }
+}
+
+
+4. 运行脚本
+-----------
+POST /api/scripts/run
+
+请求体：
+{
+    "script_name": "clean_data",
+    "args": {}
+}
+
+
+5. 健康检查
+-----------
+GET /health
+
+响应：
+{
+    "status": "healthy"
+}
+
+================================================================================
+10. 常见问题解答
+================================================================================
+
+Q1: 启动时报错"ModuleNotFoundError"
+A1: 说明依赖没有安装，运行：
+    pip install -r requirements.txt
+
+Q2: 发送消息后没有回复
+A2: 检查以下几点：
+    - API密钥是否正确
+    - 网络连接是否正常
+    - 查看终端是否有错误信息
+
+Q3: 语音播放失败
+A3: 可能原因：
+    - TTS API密钥未配置
+    - 浏览器不支持音频格式
+    - 网络连接问题
+
+Q4: 插件没有生效
+A4: 检查：
+    - 插件文件是否在 plugins 目录
+    - 是否重启了后端服务
+    - 插件代码是否有语法错误
+
+Q5: 如何修改服务器端口
+A5: 编辑 backend\.env 文件：
+    PORT=8080
+
+Q6: 数据库在哪里
+A6: 默认在 backend/chat_system.db
+    这是一个SQLite数据库文件
+
+Q7: 如何清空聊天记录
+A7: 删除 backend/chat_system.db 文件
+    重启服务会自动创建新数据库
+
+Q8: 可以使用其他AI模型吗
+A8: 可以，编辑 .env 文件：
+    OPENAI_MODEL=gpt-3.5-turbo
+
+================================================================================
+11. 项目结构说明
+================================================================================
+
+ai_chat_system/
+│
+├── backend/                    # 后端代码
+│   ├── app/
+│   │   ├── main.py            # 程序入口
+│   │   ├── models/            # 数据库模型
+│   │   │   └── database.py    # 定义数据表结构
+│   │   ├── routes/            # API路由
+│   │   │   ├── chat.py        # 聊天接口
+│   │   │   └── plugins.py     # 插件管理接口
+│   │   ├── services/          # 业务服务
+│   │   │   ├── llm_service.py # AI对话服务
+│   │   │   └── tts_service.py # 语音合成服务
+│   │   ├── plugins/           # 插件系统核心
+│   │   │   └── plugin_base.py # 插件基类
+│   │   └── scripts/           # 脚本系统核心
+│   │       └── script_base.py # 脚本基类
+│   ├── requirements.txt       # Python依赖列表
+│   ├── .env                   # 配置文件（不要分享）
+│   └── .env.example           # 配置示例
+│
+├── frontend/                  # 前端代码
+│   └── index.html             # 聊天界面
+│
+├── plugins/                   # 用户插件目录
+│   ├── welcome_plugin.py      # 示例：欢迎插件
+│   └── sentiment_plugin.py    # 示例：情感分析插件
+│
+├── scripts/                   # 用户脚本目录
+│   └── clean_data.py          # 示例：数据清理脚本
+│
+└── README.md                  # 项目说明
+
+================================================================================
+
+技术支持
+--------
+如果遇到问题，可以：
+1. 查看终端的错误信息
+2. 检查 .env 配置是否正确
+3. 确认所有依赖已安装
+4. 重启后端服务
+
+祝你使用愉快！
+
+================================================================================

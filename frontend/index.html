@@ -1,0 +1,3403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI聊天系统 - 智能对话助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #000000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 850px;
+            height: 95vh;
+            background: #0a0a0a;
+            border-radius: 20px;
+            box-shadow: 0 0 0 1px #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chat-header {
+            background: #0a0a0a;
+            color: #e5e5e5;
+            padding: 20px 24px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        
+        .header-left p {
+            font-size: 13px;
+            color: #737373;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .header-buttons select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #262626;
+            background: #171717;
+            color: #e5e5e5;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .header-buttons select option {
+            background: #171717;
+            color: #e5e5e5;
+            padding: 8px;
+        }
+        
+        .header-buttons select:hover {
+            border-color: #404040;
+        }
+        
+        .header-buttons select:focus {
+            outline: none;
+            border-color: #525252;
+        }
+        
+        .open-panel-btn {
+            background: #171717;
+            border: 1px solid #262626;
+            color: #a3a3a3;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .open-panel-btn:hover {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #000000;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #262626;
+            border-radius: 3px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #404040;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message.ai {
+            justify-content: flex-start;
+        }
+        
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            background: #171717;
+        }
+        
+        .message.ai .avatar {
+            margin-right: 10px;
+        }
+        
+        .message.user .avatar {
+            margin-left: 10px;
+            order: 2;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+        
+        .message.user .message-bubble {
+            background: #ffffff;
+            color: #0a0a0a;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.ai .message-bubble {
+            background: #171717;
+            color: #e5e5e5;
+            border: 1px solid #262626;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: #525252;
+            margin-top: 6px;
+        }
+        
+        .play-audio-btn {
+            background: #171717;
+            border: 1px solid #262626;
+            color: #a3a3a3;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .play-audio-btn:hover {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .chat-actions-bar {
+            display: flex;
+            gap: 6px;
+            padding: 6px 16px;
+            background: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+        }
+        
+        .chat-action-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            border: 1px solid #262626;
+            border-radius: 6px;
+            background: #171717;
+            color: #a3a3a3;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chat-action-btn:hover {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .chat-input-container {
+            padding: 16px 20px;
+            background: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #262626;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            background: #000000;
+            color: #e5e5e5;
+        }
+        
+        .chat-input:focus {
+            border-color: #404040;
+        }
+        
+        .chat-input::placeholder {
+            color: #525252;
+        }
+        
+        .send-btn {
+            padding: 12px 24px;
+            background: #ffffff;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .send-btn:hover {
+            background: #e5e5e5;
+        }
+        
+        .send-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: #171717;
+            border: 1px solid #262626;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .typing-indicator.show {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: #737373;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        
+        .model-panel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 420px;
+            height: 100vh;
+            background: #0a0a0a;
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.8);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .model-panel.show {
+            right: 0;
+        }
+        
+        .model-panel-header {
+            padding: 20px 24px;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        
+        .model-panel-header h2 {
+            font-size: 18px;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .model-panel-close {
+            background: #171717;
+            border: 1px solid #262626;
+            color: #a3a3a3;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .model-panel-close:hover {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .model-panel-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 70px);
+        }
+        
+        .model-panel-actions {
+            margin-bottom: 16px;
+        }
+        
+        .discover-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .discover-btn:hover {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .model-group {
+            margin-bottom: 20px;
+        }
+        
+        .model-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #737373;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        
+        .model-card {
+            padding: 14px;
+            border: 1px solid #262626;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #171717;
+        }
+        
+        .model-card:hover {
+            border-color: #404040;
+            background: #262626;
+        }
+        
+        .model-card.active {
+            border-color: #525252;
+            background: #262626;
+        }
+        
+        .model-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .model-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .model-card-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #e5e5e5;
+        }
+        
+        .model-card-desc {
+            font-size: 12px;
+            color: #737373;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .model-card-features {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .feature-tag {
+            padding: 3px 8px;
+            background: #0a0a0a;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #a3a3a3;
+            font-weight: 500;
+        }
+        
+        .model-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 999;
+        }
+        
+        .model-overlay.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #525252;
+        }
+        
+        .empty-state-icon {
+            font-size: 56px;
+            margin-bottom: 14px;
+        }
+        
+        .api-config-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+        }
+        
+        .api-config-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e5e5e5;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .api-config-item {
+            background: #171717;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .api-config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .api-config-provider {
+            font-weight: 600;
+            font-size: 13px;
+            color: #e5e5e5;
+        }
+        
+        .api-config-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+        }
+        
+        .status-configured {
+            color: #525252;
+        }
+        
+        .status-not-configured {
+            color: #737373;
+        }
+        
+        .api-config-key {
+            font-size: 11px;
+            color: #737373;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .api-config-input-wrapper {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .api-config-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #262626;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.2s;
+            background: #0a0a0a;
+            color: #e5e5e5;
+        }
+        
+        .api-config-input:focus {
+            border-color: #525252;
+        }
+        
+        .api-config-save-btn {
+            padding: 8px 16px;
+            background: #ffffff;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .api-config-save-btn:hover {
+            background: #e5e5e5;
+        }
+        
+        .api-config-save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .character-card {
+            background: #171717;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #262626;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-2px);
+            border-color: #404040;
+        }
+        
+        .character-card.active {
+            border-color: #525252;
+            background: #262626;
+        }
+        
+        .character-avatar {
+            font-size: 44px;
+            margin-bottom: 6px;
+        }
+        
+        .character-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #e5e5e5;
+            margin-bottom: 3px;
+        }
+        
+        .character-desc {
+            font-size: 11px;
+            color: #737373;
+            line-height: 1.3;
+        }
+        
+        .character-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 6px;
+            justify-content: center;
+        }
+        
+        .char-action-btn {
+            padding: 3px 8px;
+            font-size: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .char-action-btn.edit {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .char-action-btn.edit:hover {
+            background: #404040;
+        }
+        
+        .char-action-btn.delete {
+            background: #262626;
+            color: #a3a3a3;
+        }
+        
+        .char-action-btn.delete:hover {
+            background: #404040;
+            color: #e5e5e5;
+        }
+        
+        .create-btn {
+            padding: 7px 14px;
+            background: #ffffff;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .create-btn:hover {
+            background: #e5e5e5;
+        }
+        
+        .ai-assist-section {
+            background: #171717;
+            border: 1px solid #262626;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        
+        .ai-assist-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #262626;
+            border-radius: 6px;
+            font-size: 12px;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            background: #0a0a0a;
+            color: #e5e5e5;
+        }
+        
+        .ai-assist-section textarea:focus {
+            outline: none;
+            border-color: #525252;
+        }
+        
+        .character-form {
+            background: #171717;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 14px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 12px;
+            color: #a3a3a3;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #262626;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: #0a0a0a;
+            color: #e5e5e5;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #525252;
+        }
+        
+        .form-group textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        
+        .form-btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .form-btn.primary {
+            background: #ffffff;
+            color: #0a0a0a;
+        }
+        
+        .form-btn.secondary {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .worldbook-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .worldbook-item {
+            background: #171717;
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid #262626;
+            transition: all 0.2s;
+        }
+        
+        .worldbook-item:hover {
+            border-color: #404040;
+        }
+        
+        .worldbook-item.inactive {
+            opacity: 0.5;
+        }
+        
+        .worldbook-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .worldbook-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #e5e5e5;
+        }
+        
+        .worldbook-category {
+            font-size: 10px;
+            padding: 3px 6px;
+            background: #0a0a0a;
+            color: #a3a3a3;
+            border-radius: 4px;
+        }
+        
+        .worldbook-content {
+            font-size: 12px;
+            color: #737373;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        
+        .worldbook-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .worldbook-btn {
+            padding: 5px 10px;
+            font-size: 11px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-toggle {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .btn-toggle.inactive {
+            background: #171717;
+        }
+        
+        .btn-edit {
+            background: #262626;
+            color: #e5e5e5;
+        }
+        
+        .btn-edit:hover {
+            background: #404040;
+        }
+        
+        .btn-delete {
+            background: #262626;
+            color: #a3a3a3;
+        }
+        
+        .settings-section {
+            margin-bottom: 20px;
+        }
+        
+        .settings-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #e5e5e5;
+            margin-bottom: 10px;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .slider-container input[type="range"] {
+            flex: 1;
+        }
+        
+        .slider-value {
+            font-weight: 600;
+            color: #e5e5e5;
+            min-width: 35px;
+        }
+        
+        .message-actions {
+            display: none;
+            position: absolute;
+            top: 6px;
+            right: 6px;
+        }
+        
+        .message-bubble:hover .message-actions {
+            display: block;
+        }
+        
+        .msg-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 3px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        
+        .msg-action-btn:hover {
+            opacity: 1;
+        }
+        
+        .help-content h3 {
+            margin-top: 0;
+            color: #e5e5e5;
+            border-bottom: 1px solid #262626;
+            padding-bottom: 8px;
+        }
+        
+        .help-section {
+            margin-bottom: 20px;
+        }
+        
+        .help-section h4 {
+            color: #e5e5e5;
+            margin-bottom: 6px;
+        }
+        
+        .help-section p {
+            color: #737373;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        
+        .help-section ul {
+            padding-left: 18px;
+            margin: 6px 0;
+        }
+        
+        .help-section li {
+            color: #737373;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+        
+        .avatar-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #0a0a0a;
+            border-radius: 8px;
+        }
+        
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #171717;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid #262626;
+        }
+        
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-upload-controls {
+            flex: 1;
+        }
+        
+        .avatar-upload-controls p {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #737373;
+        }
+        
+        .avatar-upload-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #ffffff;
+            color: #0a0a0a;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+        
+        .avatar-upload-btn:hover {
+            background: #e5e5e5;
+        }
+        
+        .avatar-use-emoji-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #262626;
+            color: #e5e5e5;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .avatar-use-emoji-btn:hover {
+            background: #404040;
+        }
+        
+        .avatar-emoji-input {
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .avatar-emoji-input input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #262626;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #171717;
+            color: #e5e5e5;
+        }
+        
+        #avatarFileInput {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .model-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .message-bubble {
+                max-width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>🤖 AI聊天助手</h1>
+                    <p>智能对话 · 多模型支持 · 个性化服务</p>
+                </div>
+                <div class="header-buttons">
+                    <select id="modelSelect" onchange="switchModel(this.value)">
+                        <option value="">加载中...</option>
+                    </select>
+                    <button class="open-panel-btn" onclick="toggleCharacterPanel()">
+                        � 角色
+                    </button>
+                    <button class="open-panel-btn" onclick="toggleWorldbookPanel()">
+                        📚 世界书
+                    </button>
+                    <button class="open-panel-btn" onclick="toggleSettingsPanel()">
+                        ⚙️ 设置
+                    </button>
+                    <button class="open-panel-btn" onclick="toggleHelpPanel()">
+                        ❓ 帮助
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="chat-actions-bar">
+                <button class="chat-action-btn" onclick="recallLastMessage()">↩️ 回溯</button>
+                <button class="chat-action-btn" onclick="undoDelete()">↩️ 恢复</button>
+                <button class="chat-action-btn" onclick="clearCurrentChat()">🗑️ 清空</button>
+            </div>
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="messageInput" 
+                    placeholder="输入消息..."
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    发送
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 模型广场面板 -->
+    <div class="model-overlay" id="modelOverlay" onclick="closeAllPanels()"></div>
+    <div class="model-panel" id="modelPanel">
+        <div class="model-panel-header">
+            <h2>🎯 模型广场</h2>
+            <button class="model-panel-close" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="model-panel-body" id="modelPanelBody">
+            <p style="text-align: center; color: #737373;">加载中...</p>
+        </div>
+    </div>
+    
+    <!-- 角色预设面板 -->
+    <div class="model-panel" id="characterPanel">
+        <div class="model-panel-header">
+            <h2>👤 角色预设</h2>
+            <button class="model-panel-close" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="model-panel-body" id="characterPanelBody">
+            <p style="text-align: center; color: #737373;">加载中...</p>
+        </div>
+    </div>
+    
+    <!-- 世界书面板 -->
+    <div class="model-panel" id="worldbookPanel">
+        <div class="model-panel-header">
+            <h2>📚 世界书</h2>
+            <button class="model-panel-close" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="model-panel-body" id="worldbookPanelBody">
+            <p style="text-align: center; color: #737373;">加载中...</p>
+        </div>
+    </div>
+    
+    <!-- 设置面板 -->
+    <div class="model-panel" id="settingsPanel">
+        <div class="model-panel-header">
+            <h2>⚙️ 聊天设置</h2>
+            <button class="model-panel-close" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="model-panel-body" id="settingsPanelBody">
+            <p style="text-align: center; color: #737373;">加载中...</p>
+        </div>
+    </div>
+    
+    <!-- 帮助面板 -->
+    <div class="model-panel" id="helpPanel">
+        <div class="model-panel-header">
+            <h2>❓ 使用帮助</h2>
+            <button class="model-panel-close" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="model-panel-body" id="helpPanelBody">
+            <p style="text-align: center; color: #737373;">加载中...</p>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const USER_ID = 1;
+        let audioPlayer = new Audio();
+        let allModels = [];
+        let currentModelId = '';
+        let allCharacters = [];
+        let currentCharacterId = localStorage.getItem('currentCharacterId') || 'default';
+        let allWorldbookEntries = [];
+        let chatSettings = {
+            temperature: 0.7,
+            max_tokens: 2000,
+            top_p: 0.9
+        };
+        
+        // 页面加载时获取模型列表并聚焦输入框
+        window.onload = async () => {
+            document.getElementById('messageInput').focus();
+            await loadModels();
+            await loadCharacters();
+            await loadWorldbook();
+            renderModelPanel();
+            renderCharacterPanel();
+            renderWorldbookPanel();
+            loadSettings();
+            loadChatForCharacter(currentCharacterId);
+        };
+        
+        async function loadModels() {
+            try {
+                console.log('开始加载模型列表...');
+                const response = await fetch(`${API_BASE}/api/models/list`);
+                console.log('模型列表响应状态:', response.status);
+                const data = await response.json();
+                console.log('模型列表数据:', data);
+                
+                if (data.success) {
+                    allModels = data.models;
+                    currentModelId = data.current_model;
+                    console.log('模型加载成功，共', allModels.length, '个模型');
+                    updateModelSelector(data.models, data.current_model);
+                } else {
+                    console.error('模型列表返回失败:', data);
+                    updateModelSelector([], null);
+                }
+            } catch (error) {
+                console.error('加载模型列表失败:', error);
+                updateModelSelector([], null);
+            }
+        }
+        
+        function updateModelSelector(models, currentId) {
+            const select = document.getElementById('modelSelect');
+            select.innerHTML = '';
+            
+            const configuredModels = models.filter(m => m.api_key_configured);
+            
+            if (configuredModels.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.text = '⚠️ 请先在设置中配置API Key';
+                option.disabled = true;
+                option.selected = true;
+                select.appendChild(option);
+            } else {
+                configuredModels.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.id;
+                    option.text = `${model.name}`;
+                    option.selected = model.id === currentId;
+                    select.appendChild(option);
+                });
+            }
+        }
+        
+        function getProviderClass(provider) {
+            const map = {
+                'DeepSeek': 'badge-deepseek',
+                'OpenAI': 'badge-openai',
+                '阿里云': 'badge-aliyun',
+                '智谱AI': 'badge-zhipu',
+                '百度': 'badge-baidu'
+            };
+            return map[provider] || 'badge-deepseek';
+        }
+        
+        async function switchModel(modelId) {
+            if (!modelId) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/models/switch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model_id: modelId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentModelId = modelId;
+                }
+            } catch (error) {
+                console.error('切换模型失败:', error);
+            }
+        }
+        
+        function toggleModelPanel() {
+            const panel = document.getElementById('modelPanel');
+            const overlay = document.getElementById('modelOverlay');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                renderModelPanel();
+            }
+        }
+        
+        function renderModelPanel() {
+            const body = document.getElementById('modelPanelBody');
+            
+            let html = `
+                <div class="model-panel-actions">
+                    <button class="discover-btn" onclick="discoverModels()">
+                        🔍 从供应商拉取可用模型
+                    </button>
+                </div>
+                <div id="discoverResult" style="display: none; margin-bottom: 16px;"></div>
+            `;
+            
+            // 按提供商分组
+            const groups = {};
+            allModels.forEach(model => {
+                if (!groups[model.provider]) {
+                    groups[model.provider] = [];
+                }
+                groups[model.provider].push(model);
+            });
+            
+            for (const [provider, models] of Object.entries(groups)) {
+                html += `<div class="model-group">`;
+                html += `<div class="model-group-title">${provider}</div>`;
+                
+                models.forEach(model => {
+                    const isActive = model.id === currentModelId;
+                    const isDisabled = !model.api_key_configured;
+                    const providerClass = getProviderClass(provider);
+                    
+                    html += `
+                        <div class="model-card ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}" 
+                             onclick="${isDisabled ? '' : `selectModelFromPanel('${model.id}')`}">
+                            <div class="model-card-header">
+                                <span class="model-card-name">${model.name}</span>
+                                <span class="model-badge ${providerClass}">${model.api_key_configured ? '✓ 已配置' : '✗ 未配置'}</span>
+                            </div>
+                            <div class="model-card-desc">${model.description}</div>
+                            <div class="model-card-features">
+                                ${model.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            }
+            
+            // 添加API配置区域
+            html += renderApiConfigSection();
+            
+            body.innerHTML = html;
+        }
+        
+        async function discoverModels() {
+            const resultDiv = document.getElementById('discoverResult');
+            if (!resultDiv) return;
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p style="text-align: center; color: #737373;">正在拉取模型...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/models/discover`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    resultDiv.innerHTML = '<p style="color: #f44336;">拉取失败，请检查API Key配置</p>';
+                    return;
+                }
+                
+                let html = '<div style="background: #171717; padding: 16px; border-radius: 8px; border: 1px solid #262626;">';
+                html += '<div style="font-size: 14px; font-weight: 600; color: #e5e5e5; margin-bottom: 12px;">';
+                html += `✅ 发现 ${data.total} 个可用模型</div>`;
+                
+                for (const [provider, models] of Object.entries(data.providers)) {
+                    html += `<div style="margin-bottom: 12px;">`;
+                    html += `<div style="font-size: 13px; color: #a3a3a3; margin-bottom: 8px;">${provider} (${models.length}个)</div>`;
+                    
+                    models.forEach(model => {
+                        const exists = allModels.find(m => m.id === model.id);
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #0a0a0a; border-radius: 6px; margin-bottom: 4px;">
+                                <span style="font-size: 12px; color: #e5e5e5;">${model.id}</span>
+                                ${exists ? 
+                                    '<span style="font-size: 11px; color: #4caf50;">已添加</span>' :
+                                    `<button class="form-btn primary" style="padding: 4px 12px; font-size: 11px;" 
+                                             onclick="addDiscoveredModel('${provider}', '${model.id}')">添加</button>`
+                                }
+                            </div>
+                        `;
+                    });
+                    
+                    html += `</div>`;
+                }
+                
+                html += '</div>';
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('拉取模型失败:', error);
+                resultDiv.innerHTML = '<p style="color: #f44336;">拉取失败，请检查网络连接</p>';
+            }
+        }
+        
+        async function addDiscoveredModel(provider, modelId) {
+            const providerConfigs = {
+                "DeepSeek": {
+                    "base_url": "https://api.deepseek.com",
+                    "api_key_env": "DEEPSEEK_API_KEY"
+                },
+                "OpenAI": {
+                    "base_url": "https://api.openai.com/v1",
+                    "api_key_env": "OPENAI_API_KEY"
+                },
+                "阿里云": {
+                    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                    "api_key_env": "DASHSCOPE_API_KEY"
+                },
+                "智谱AI": {
+                    "base_url": "https://open.bigmodel.cn/api/paas/v4",
+                    "api_key_env": "ZHIPU_API_KEY"
+                },
+                "百度": {
+                    "base_url": "https://qianfan.baidubce.com/v2",
+                    "api_key_env": "BAIDU_API_KEY"
+                }
+            };
+            
+            const config = providerConfigs[provider] || {
+                "base_url": "https://api.openai.com/v1",
+                "api_key_env": "CUSTOM_API_KEY"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/models/add-custom`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: modelId,
+                        name: modelId,
+                        provider: provider,
+                        model_id: modelId,
+                        base_url: config.base_url,
+                        api_key_env: config.api_key_env,
+                        description: `从${provider}添加的模型`,
+                        features: ["对话"]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ 模型 ${modelId} 已添加`);
+                    await loadModels();
+                    renderModelPanel();
+                    discoverModels();
+                } else {
+                    alert(`❌ 添加失败: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('添加模型失败:', error);
+                alert('❌ 添加失败，请检查网络连接');
+            }
+        }
+        
+        function renderApiConfigSection() {
+            // 获取所有提供商的API配置状态
+            const providers = {};
+            allModels.forEach(model => {
+                if (!providers[model.provider]) {
+                    providers[model.provider] = {
+                        env_name: model.api_key_env || `API_KEY_${model.provider.toUpperCase()}`,
+                        configured: model.api_key_configured,
+                        api_key: model.api_key || ''
+                    };
+                }
+            });
+            
+            let html = `
+                <div class="api-config-section">
+                    <div class="api-config-title">🔑 API 配置</div>
+            `;
+            
+            for (const [provider, config] of Object.entries(providers)) {
+                const statusClass = config.configured ? 'status-configured' : 'status-not-configured';
+                const statusText = config.configured ? '● 已配置' : '● 未配置';
+                const maskedKey = config.api_key ? maskApiKey(config.api_key) : '未设置';
+                
+                html += `
+                    <div class="api-config-item">
+                        <div class="api-config-header">
+                            <span class="api-config-provider">${provider}</span>
+                            <span class="api-config-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="api-config-key">${maskedKey}</div>
+                        <div class="api-config-input-wrapper">
+                            <input 
+                                type="password" 
+                                class="api-config-input" 
+                                id="api-key-${provider}"
+                                placeholder="输入 ${provider} API Key"
+                                value="${config.api_key || ''}"
+                            >
+                            <button 
+                                class="api-config-save-btn" 
+                                onclick="saveApiKey('${provider}', '${config.env_name}')"
+                            >
+                                保存
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+        
+        function maskApiKey(key) {
+            if (!key || key.length < 12) return '未设置';
+            return key.substring(0, 8) + '...' + key.substring(key.length - 4);
+        }
+        
+        async function saveApiKey(provider, envName) {
+            const input = document.getElementById(`api-key-${provider}`);
+            const apiKey = input.value.trim();
+            
+            if (!apiKey) {
+                addMessage('ai', `❌ 请输入 ${provider} 的 API Key`);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/models/api-keys`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        env_name: envName,
+                        api_key: apiKey
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage('ai', `✅ ${provider} API Key 已保存`);
+                    // 重新加载模型列表
+                    await loadModels();
+                    renderModelPanel();
+                } else {
+                    addMessage('ai', `❌ 保存失败: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('保存API Key失败:', error);
+                addMessage('ai', '❌ 保存失败，请检查网络连接');
+            }
+        }
+        
+        async function selectModelFromPanel(modelId) {
+            await switchModel(modelId);
+            updateModelSelector(allModels, modelId);
+            renderModelPanel();
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // 添加用户消息到界面
+            addMessage('user', message);
+            input.value = '';
+            
+            // 显示输入指示器
+            showTypingIndicator();
+            
+            try {
+                // 发送请求到后端
+                const response = await fetch(`${API_BASE}/api/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: USER_ID,
+                        message: message,
+                        enable_tts: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // 隐藏输入指示器
+                hideTypingIndicator();
+                
+                if (data.success) {
+                    // 添加AI回复到界面
+                    addMessage('ai', data.reply, data.audio_base64);
+                } else {
+                    addMessage('ai', '抱歉，出现了错误，请稍后重试。');
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('ai', '抱歉，无法连接到服务器。');
+                console.error('Error:', error);
+            }
+        }
+        
+        function addMessage(role, content, audioBase64 = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const time = new Date().toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            let avatarContent = role === 'ai' ? '🤖' : '👤';
+            if (role === 'ai' && currentCharacter) {
+                if (currentCharacter.avatar.startsWith('data:')) {
+                    avatarContent = `<img src="${currentCharacter.avatar}" alt="avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                } else {
+                    avatarContent = currentCharacter.avatar;
+                }
+            }
+            
+            let audioButton = '';
+            if (audioBase64 && role === 'ai') {
+                audioButton = `
+                    <button class="play-audio-btn" onclick="playAudio('${audioBase64}')">
+                        🔊 播放语音
+                    </button>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="avatar">${avatarContent}</div>
+                <div class="message-bubble">
+                    ${content}
+                    ${audioButton}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function playAudio(base64Audio) {
+            audioPlayer.src = `data:audio/mp3;base64,${base64Audio}`;
+            audioPlayer.play();
+        }
+        
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('show');
+        }
+        
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('show');
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function closeAllPanels() {
+            document.getElementById('modelPanel').classList.remove('show');
+            document.getElementById('characterPanel').classList.remove('show');
+            document.getElementById('worldbookPanel').classList.remove('show');
+            document.getElementById('settingsPanel').classList.remove('show');
+            document.getElementById('helpPanel').classList.remove('show');
+            document.getElementById('modelOverlay').classList.remove('show');
+        }
+        
+        function toggleModelPanel() {
+            closeAllPanels();
+            const panel = document.getElementById('modelPanel');
+            const overlay = document.getElementById('modelOverlay');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                renderModelPanel();
+            }
+        }
+        
+        async function loadCharacters() {
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/list`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allCharacters = data.characters;
+                    currentCharacterId = data.current_character;
+                }
+            } catch (error) {
+                console.error('加载角色列表失败:', error);
+            }
+        }
+        
+        function toggleCharacterPanel() {
+            closeAllPanels();
+            const panel = document.getElementById('characterPanel');
+            const overlay = document.getElementById('modelOverlay');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                renderCharacterPanel();
+            }
+        }
+        
+        function renderCharacterPanel() {
+            const body = document.getElementById('characterPanelBody');
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 16px;">选择角色</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="create-btn" onclick="showCreateCharacterForm()">+ 创建角色</button>
+                        <button class="create-btn" onclick="importCharacterCard()" style="background: #2196f3;">📥 导入</button>
+                        <button class="create-btn" onclick="saveCurrentCharacter()" style="background: #4caf50;">💾 保存</button>
+                    </div>
+                </div>
+            `;
+            
+            if (allCharacters.length === 0) {
+                html += `
+                    <div style="text-align: center; padding: 40px 20px; color: #999;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">👤</div>
+                        <p>还没有角色，点击"+ 创建角色"开始创建你的第一个角色吧！</p>
+                    </div>
+                `;
+            } else {
+                html += '<div class="character-grid">';
+                allCharacters.forEach(char => {
+                    const isActive = char.id === currentCharacterId;
+                    const avatarContent = char.avatar.startsWith('data:') 
+                        ? `<img src="${char.avatar}" alt="${char.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` 
+                        : char.avatar;
+                    html += `
+                        <div class="character-card ${isActive ? 'active' : ''}" 
+                             onclick="switchCharacter('${char.id}')">
+                            <div class="character-avatar">${avatarContent}</div>
+                            <div class="character-name">${char.name}</div>
+                            <div class="character-desc">${char.description}</div>
+                            <div class="character-actions">
+                                <button class="char-action-btn edit" onclick="event.stopPropagation(); showEditCharacterForm('${char.id}')">编辑</button>
+                                <button class="char-action-btn delete" onclick="event.stopPropagation(); deleteCharacter('${char.id}')">删除</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            html += '<div id="characterFormContainer"></div>';
+            body.innerHTML = html;
+        }
+        
+        async function switchCharacter(characterId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/switch?character_id=${characterId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentCharacterId = characterId;
+                    localStorage.setItem('currentCharacterId', characterId);
+                    const char = allCharacters.find(c => c.id === characterId);
+                    addMessage('ai', `✅ 已切换到 ${char.avatar} ${char.name}`);
+                    renderCharacterPanel();
+                    loadChatForCharacter(characterId);
+                } else {
+                    addMessage('ai', `❌ 切换失败: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('切换角色失败:', error);
+                addMessage('ai', '❌ 切换角色失败');
+            }
+        }
+        
+        function showCreateCharacterForm() {
+            const container = document.getElementById('characterFormContainer');
+            container.innerHTML = `
+                <div class="character-form">
+                    <h3 style="margin-top: 0; color: #e5e5e5;">✨ 创建新角色</h3>
+                    <div style="background: #171717; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 11px; color: #a3a3a3; border: 1px solid #262626;">
+                        💡 <strong>提示：</strong>角色是AI的人格设定，包括性格、说话方式和背景故事。创建后AI会按照这个角色来和你对话。
+                    </div>
+                    
+                    <!-- AI辅助创建区域 -->
+                    <div class="ai-assist-section">
+                        <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #e5e5e5;">🤖 AI辅助创建</h4>
+                        <p style="margin: 0 0 12px 0; font-size: 12px; color: #737373;">
+                            只需描述你想要的角色故事或想法，AI会自动帮你填写所有信息
+                        </p>
+                        <textarea id="aiStoryInput" placeholder="例如：我想创建一个生活在未来世界的机器人助手，它很聪明但有时候会犯迷糊，喜欢用数据说话..." style="min-height: 80px; margin-bottom: 12px;"></textarea>
+                        <button class="form-btn primary" onclick="aiGenerateCharacter()" id="aiGenerateBtn">
+                            ✨ 让AI帮我创建
+                        </button>
+                        <div id="aiGenerateStatus" style="margin-top: 8px; font-size: 12px; color: #a3a3a3; display: none;">
+                            🤖 AI正在思考中...
+                        </div>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid #262626; margin: 20px 0;">
+                    
+                    <!-- 头像上传区域 -->
+                    <div class="avatar-upload-section">
+                        <div class="avatar-preview" id="avatarPreview">
+                            🤖
+                        </div>
+                        <div class="avatar-upload-controls">
+                            <p>角色头像</p>
+                            <label class="avatar-upload-btn" for="avatarFileInput">
+                                📁 上传图片
+                            </label>
+                            <button class="avatar-use-emoji-btn" onclick="toggleEmojiInput()">
+                                😊 使用Emoji
+                            </button>
+                            <input type="file" id="avatarFileInput" accept="image/*" onchange="handleAvatarUpload(event)">
+                            <div class="avatar-emoji-input" id="avatarEmojiInput">
+                                <input type="text" id="charFormAvatar" placeholder="输入一个emoji，例如：🤖" value="🤖" oninput="updateAvatarPreview(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>角色ID <span style="color: #737373; font-weight: normal;">（英文和数字，创建后不可修改）</span></label>
+                        <input type="text" id="charFormId" placeholder="例如：my_wizard、helper_bot、story_teller">
+                    </div>
+                    <div class="form-group">
+                        <label>角色名称 <span style="color: #737373; font-weight: normal;">（必填）</span></label>
+                        <input type="text" id="charFormName" placeholder="例如：魔法师小明">
+                    </div>
+                    <div class="form-group">
+                        <label>角色描述 <span style="color: #737373; font-weight: normal;">（必填，简短介绍）</span></label>
+                        <input type="text" id="charFormDesc" placeholder="例如：一个生活在魔法世界的年轻巫师">
+                    </div>
+                    <div class="form-group">
+                        <label>性格特点</label>
+                        <textarea id="charFormPersonality" placeholder="例如：活泼开朗、好奇心强、喜欢用比喻说话、偶尔会犯迷糊"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>开场白</label>
+                        <textarea id="charFormGreeting" placeholder="例如：你好呀！我是魔法师小明，刚从魔法学院毕业，有什么需要帮忙的吗？"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>系统提示词 <span style="color: #737373; font-weight: normal;">（重要！告诉AI如何扮演这个角色）</span></label>
+                        <textarea id="charFormSystemPrompt" style="min-height: 100px;" placeholder="例如：你是一个生活在魔法世界的年轻魔法师。你性格活泼，喜欢用比喻来解释事情。你刚从魔法学院毕业，对各种魔法知识都很了解。请用第一人称和用户对话。"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>标签（用逗号分隔）</label>
+                        <input type="text" id="charFormTags" placeholder="例如：魔法,奇幻,冒险">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-btn secondary" onclick="hideCharacterForm()">取消</button>
+                        <button class="form-btn primary" onclick="createCharacter()">创建角色</button>
+                    </div>
+                </div>
+            `;
+            // 滚动到表单
+            setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+        
+        function showEditCharacterForm(characterId) {
+            const char = allCharacters.find(c => c.id === characterId);
+            if (!char) return;
+            
+            const container = document.getElementById('characterFormContainer');
+            container.innerHTML = `
+                <div class="character-form">
+                    <h3 style="margin-top: 0; color: #e5e5e5;">编辑角色</h3>
+                    
+                    <!-- AI辅助修改区域 -->
+                    <div class="ai-assist-section">
+                        <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #e5e5e5;">🤖 AI辅助修改</h4>
+                        <p style="margin: 0 0 12px 0; font-size: 12px; color: #737373;">
+                            描述你想要修改的内容，AI会自动帮你更新角色设定
+                        </p>
+                        <textarea id="aiModifyInput" placeholder="例如：让角色更幽默一些，喜欢开玩笑，说话带点调侃的语气..." style="min-height: 80px; margin-bottom: 12px;"></textarea>
+                        <button class="form-btn primary" onclick="aiModifyCharacter('${characterId}')" id="aiModifyBtn">
+                            ✨ 让AI帮我修改
+                        </button>
+                        <div id="aiModifyStatus" style="margin-top: 8px; font-size: 12px; color: #a3a3a3; display: none;">
+                            🤖 AI正在修改中...
+                        </div>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid #262626; margin: 20px 0;">
+                    
+                    <div class="form-group">
+                        <label>角色名称</label>
+                        <input type="text" id="charFormName" value="${char.name}">
+                    </div>
+                    <div class="form-group">
+                        <label>头像Emoji</label>
+                        <input type="text" id="charFormAvatar" value="${char.avatar}">
+                    </div>
+                    <div class="form-group">
+                        <label>角色描述</label>
+                        <input type="text" id="charFormDesc" value="${char.description}">
+                    </div>
+                    <div class="form-group">
+                        <label>性格特点</label>
+                        <textarea id="charFormPersonality">${char.personality}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>开场白</label>
+                        <textarea id="charFormGreeting">${char.greeting}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>系统提示词</label>
+                        <textarea id="charFormSystemPrompt">${char.system_prompt}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>标签（用逗号分隔）</label>
+                        <input type="text" id="charFormTags" value="${char.tags.join(', ')}">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-btn secondary" onclick="hideCharacterForm()">取消</button>
+                        <button class="form-btn primary" onclick="updateCharacter('${characterId}')">保存</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function hideCharacterForm() {
+            const container = document.getElementById('characterFormContainer');
+            container.innerHTML = '';
+        }
+        
+        function importCharacterCard() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,.png';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                try {
+                    let characterData;
+                    
+                    if (file.name.endsWith('.png')) {
+                        // PNG角色卡（包含嵌入的JSON数据）
+                        characterData = await parsePngCharacterCard(file);
+                    } else if (file.name.endsWith('.json')) {
+                        // JSON角色卡
+                        const text = await file.text();
+                        characterData = JSON.parse(text);
+                    } else {
+                        alert('仅支持 .json 和 .png 格式的角色卡文件');
+                        return;
+                    }
+                    
+                    if (!characterData) {
+                        alert('无法解析角色卡数据');
+                        return;
+                    }
+                    
+                    // 填充到创建表单
+                    showCreateCharacterForm();
+                    
+                    // 等待表单渲染完成
+                    setTimeout(() => {
+                        document.getElementById('charFormId').value = characterData.id || generateCharacterId(characterData.name);
+                        document.getElementById('charFormName').value = characterData.name || '';
+                        document.getElementById('charFormAvatar').value = characterData.avatar || '🤖';
+                        document.getElementById('charFormDesc').value = characterData.description || '';
+                        document.getElementById('charFormPersonality').value = characterData.personality || '';
+                        document.getElementById('charFormGreeting').value = characterData.greeting || '';
+                        document.getElementById('charFormSystemPrompt').value = characterData.system_prompt || characterData.persona || '';
+                        document.getElementById('charFormTags').value = (characterData.tags || []).join(', ');
+                        
+                        // 如果有头像图片数据
+                        if (characterData.avatar_image) {
+                            updateAvatarPreview(characterData.avatar_image);
+                        }
+                        
+                        alert('✅ 角色卡已导入，请检查信息后点击"保存"');
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('导入角色卡失败:', error);
+                    alert('❌ 导入失败: ' + error.message);
+                }
+            };
+            input.click();
+        }
+        
+        function generateCharacterId(name) {
+            if (!name) return 'character_' + Date.now();
+            return name.toLowerCase()
+                .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '_')
+                .replace(/_{2,}/g, '_')
+                .substring(0, 30) || 'character_' + Date.now();
+        }
+        
+        async function parsePngCharacterCard(file) {
+            // 尝试从PNG文件中提取嵌入的JSON数据
+            // 支持常见的角色卡格式（如TavernAI、SillyTavern等）
+            const arrayBuffer = await file.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+            
+            // 查找PNG中的tEXt块（文本数据块）
+            let offset = 8; // 跳过PNG签名
+            while (offset < uint8Array.length - 12) {
+                const length = (uint8Array[offset] << 24) | (uint8Array[offset + 1] << 16) | (uint8Array[offset + 2] << 8) | uint8Array[offset + 3];
+                const chunkType = String.fromCharCode(...uint8Array.slice(offset + 4, offset + 8));
+                
+                if (chunkType === 'tEXt' || chunkType === 'iTXt' || chunkType === 'zTXt') {
+                    const textData = new TextDecoder().decode(uint8Array.slice(offset + 8, offset + 8 + length));
+                    
+                    // 尝试解析JSON
+                    try {
+                        // TavernAI格式：chara字段是Base64编码的JSON
+                        if (textData.startsWith('chara')) {
+                            const base64Data = textData.substring(5);
+                            const jsonStr = atob(base64Data);
+                            return JSON.parse(jsonStr);
+                        }
+                        
+                        // 直接JSON
+                        if (textData.trim().startsWith('{')) {
+                            return JSON.parse(textData);
+                        }
+                    } catch (e) {
+                        // 继续查找下一个文本块
+                    }
+                }
+                
+                offset += 12 + length; // 4字节长度 + 4字节类型 + 数据 + 4字节CRC
+            }
+            
+            throw new Error('PNG文件中未找到角色卡数据');
+        }
+        
+        async function saveCurrentCharacter() {
+            const charFormId = document.getElementById('charFormId');
+            const charFormName = document.getElementById('charFormName');
+            
+            if (!charFormId || !charFormName) {
+                alert('请先创建或编辑一个角色');
+                return;
+            }
+            
+            const characterId = charFormId.value.trim();
+            const name = charFormName.value.trim();
+            
+            if (!characterId || !name) {
+                alert('请填写角色ID和名称');
+                return;
+            }
+            
+            const avatar = document.getElementById('charFormAvatar').value.trim();
+            const description = document.getElementById('charFormDesc').value.trim();
+            const personality = document.getElementById('charFormPersonality').value.trim();
+            const greeting = document.getElementById('charFormGreeting').value.trim();
+            const system_prompt = document.getElementById('charFormSystemPrompt').value.trim();
+            const tagsStr = document.getElementById('charFormTags').value.trim();
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+            
+            try {
+                const existingChar = allCharacters.find(c => c.id === characterId);
+                let response;
+                
+                if (existingChar) {
+                    response = await fetch(`${API_BASE}/api/characters/update/${characterId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, description, personality, greeting, system_prompt, avatar, tags })
+                    });
+                } else {
+                    response = await fetch(`${API_BASE}/api/characters/create`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: characterId, name, description, personality, greeting, system_prompt, avatar, tags })
+                    });
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ 保存成功！');
+                    hideCharacterForm();
+                    await loadCharacters();
+                    renderCharacterPanel();
+                } else {
+                    alert('❌ 保存失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('保存角色失败:', error);
+                alert('❌ 保存失败，请检查网络连接');
+            }
+        }
+        
+        async function aiGenerateCharacter() {
+            const story = document.getElementById('aiStoryInput').value.trim();
+            if (!story) {
+                alert('请先描述你想要的角色故事或想法');
+                return;
+            }
+            
+            const btn = document.getElementById('aiGenerateBtn');
+            const status = document.getElementById('aiGenerateStatus');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ AI正在生成中...';
+            status.style.display = 'block';
+            status.textContent = '🤖 AI正在思考中，请稍候...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/ai-generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ story })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const char = data.character;
+                    
+                    // 填入表单
+                    document.getElementById('charFormId').value = char.id || '';
+                    document.getElementById('charFormName').value = char.name || '';
+                    document.getElementById('charFormAvatar').value = char.avatar || '🤖';
+                    document.getElementById('charFormDesc').value = char.description || '';
+                    document.getElementById('charFormPersonality').value = char.personality || '';
+                    document.getElementById('charFormGreeting').value = char.greeting || '';
+                    document.getElementById('charFormSystemPrompt').value = char.system_prompt || '';
+                    document.getElementById('charFormTags').value = (char.tags || []).join(', ');
+                    
+                    status.style.color = '#4caf50';
+                    status.textContent = '✅ AI已生成角色设定，你可以检查并修改后点击"创建角色"';
+                } else {
+                    status.style.color = '#f44336';
+                    status.textContent = '❌ ' + data.message;
+                }
+            } catch (error) {
+                console.error('AI生成角色失败:', error);
+                status.style.color = '#f44336';
+                status.textContent = '❌ 生成失败，请检查网络连接';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✨ 让AI帮我创建';
+            }
+        }
+        
+        async function aiModifyWorldbook(entryId) {
+            const modifyPrompt = document.getElementById('wbAiModifyInput').value.trim();
+            if (!modifyPrompt) {
+                alert('请先描述你想要修改的内容');
+                return;
+            }
+            
+            // 获取当前表单数据
+            const currentData = {
+                id: entryId,
+                title: document.getElementById('wbFormTitle').value,
+                category: document.getElementById('wbFormCategory').value,
+                content: document.getElementById('wbFormContent').value,
+                tags: document.getElementById('wbFormTags').value.split(',').map(t => t.trim()).filter(t => t)
+            };
+            
+            const btn = document.getElementById('wbAiModifyBtn');
+            const status = document.getElementById('wbAiModifyStatus');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ AI正在修改中...';
+            status.style.display = 'block';
+            status.textContent = '🤖 AI正在修改中，请稍候...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/ai-modify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        current_entry: currentData,
+                        modify_prompt: modifyPrompt 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const entry = data.entry;
+                    
+                    // 更新表单
+                    document.getElementById('wbFormTitle').value = entry.title || '';
+                    document.getElementById('wbFormCategory').value = entry.category || 'general';
+                    document.getElementById('wbFormContent').value = entry.content || '';
+                    document.getElementById('wbFormTags').value = (entry.tags || []).join(', ');
+                    
+                    status.style.color = '#4caf50';
+                    status.textContent = '✅ AI已修改世界书条目，你可以检查并点击"保存"';
+                } else {
+                    status.style.color = '#f44336';
+                    status.textContent = '❌ ' + data.message;
+                }
+            } catch (error) {
+                console.error('AI修改世界书失败:', error);
+                status.style.color = '#f44336';
+                status.textContent = '❌ 修改失败，请检查网络连接';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✨ 让AI帮我修改';
+            }
+        }
+        
+        async function aiModifyCharacter(characterId) {
+            const modifyPrompt = document.getElementById('aiModifyInput').value.trim();
+            if (!modifyPrompt) {
+                alert('请先描述你想要修改的内容');
+                return;
+            }
+            
+            // 获取当前表单数据
+            const currentData = {
+                id: characterId,
+                name: document.getElementById('charFormName').value,
+                avatar: document.getElementById('charFormAvatar').value,
+                description: document.getElementById('charFormDesc').value,
+                personality: document.getElementById('charFormPersonality').value,
+                greeting: document.getElementById('charFormGreeting').value,
+                system_prompt: document.getElementById('charFormSystemPrompt').value,
+                tags: document.getElementById('charFormTags').value.split(',').map(t => t.trim()).filter(t => t)
+            };
+            
+            const btn = document.getElementById('aiModifyBtn');
+            const status = document.getElementById('aiModifyStatus');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ AI正在修改中...';
+            status.style.display = 'block';
+            status.textContent = '🤖 AI正在修改中，请稍候...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/ai-modify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        current_character: currentData,
+                        modify_prompt: modifyPrompt 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const char = data.character;
+                    
+                    // 更新表单
+                    document.getElementById('charFormName').value = char.name || '';
+                    document.getElementById('charFormAvatar').value = char.avatar || '🤖';
+                    document.getElementById('charFormDesc').value = char.description || '';
+                    document.getElementById('charFormPersonality').value = char.personality || '';
+                    document.getElementById('charFormGreeting').value = char.greeting || '';
+                    document.getElementById('charFormSystemPrompt').value = char.system_prompt || '';
+                    document.getElementById('charFormTags').value = (char.tags || []).join(', ');
+                    
+                    status.style.color = '#4caf50';
+                    status.textContent = '✅ AI已修改角色设定，你可以检查并点击"保存"';
+                } else {
+                    status.style.color = '#f44336';
+                    status.textContent = '❌ ' + data.message;
+                }
+            } catch (error) {
+                console.error('AI修改角色失败:', error);
+                status.style.color = '#f44336';
+                status.textContent = '❌ 修改失败，请检查网络连接';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✨ 让AI帮我修改';
+            }
+        }
+        
+        let currentAvatarData = '🤖';
+        
+        function toggleEmojiInput() {
+            const emojiInput = document.getElementById('avatarEmojiInput');
+            if (emojiInput.style.display === 'none' || !emojiInput.style.display) {
+                emojiInput.style.display = 'block';
+            } else {
+                emojiInput.style.display = 'none';
+            }
+        }
+        
+        function updateAvatarPreview(value) {
+            const preview = document.getElementById('avatarPreview');
+            if (value) {
+                preview.textContent = value;
+                currentAvatarData = value;
+            }
+        }
+        
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('avatarPreview');
+                preview.innerHTML = `<img src="${e.target.result}" alt="avatar">`;
+                currentAvatarData = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        async function createCharacter() {
+            const id = document.getElementById('charFormId').value.trim();
+            const name = document.getElementById('charFormName').value.trim();
+            const avatar = currentAvatarData || '🤖';
+            const description = document.getElementById('charFormDesc').value.trim();
+            const personality = document.getElementById('charFormPersonality').value.trim();
+            const greeting = document.getElementById('charFormGreeting').value.trim();
+            const system_prompt = document.getElementById('charFormSystemPrompt').value.trim();
+            const tagsStr = document.getElementById('charFormTags').value.trim();
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+            
+            // 验证必填字段
+            if (!id) {
+                alert('请填写角色ID（只能使用英文和数字）');
+                return;
+            }
+            
+            if (!/^[a-zA-Z0-9_]+$/.test(id)) {
+                alert('角色ID只能使用英文字母、数字和下划线');
+                return;
+            }
+            
+            if (!name) {
+                alert('请填写角色名称');
+                return;
+            }
+            
+            if (!description) {
+                alert('请填写角色描述');
+                return;
+            }
+            
+            if (!system_prompt) {
+                alert('请填写系统提示词（这很重要，它告诉AI如何扮演这个角色）');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, description, personality, greeting, system_prompt, avatar, tags })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ 角色创建成功！');
+                    hideCharacterForm();
+                    await loadCharacters();
+                    renderCharacterPanel();
+                } else {
+                    alert('❌ 创建失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('创建角色失败:', error);
+                alert('❌ 创建失败，请检查网络连接');
+            }
+        }
+        
+        async function updateCharacter(characterId) {
+            const name = document.getElementById('charFormName').value.trim();
+            const avatar = document.getElementById('charFormAvatar').value.trim();
+            const description = document.getElementById('charFormDesc').value.trim();
+            const personality = document.getElementById('charFormPersonality').value.trim();
+            const greeting = document.getElementById('charFormGreeting').value.trim();
+            const system_prompt = document.getElementById('charFormSystemPrompt').value.trim();
+            const tagsStr = document.getElementById('charFormTags').value.trim();
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/update/${characterId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description, personality, greeting, system_prompt, avatar, tags })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('角色更新成功！');
+                    hideCharacterForm();
+                    await loadCharacters();
+                    renderCharacterPanel();
+                } else {
+                    alert('更新失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('更新角色失败:', error);
+                alert('更新失败，请检查网络连接');
+            }
+        }
+        
+        async function deleteCharacter(characterId) {
+            if (!confirm('确定要删除这个角色吗？此操作不可恢复。')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/characters/delete/${characterId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('角色已删除');
+                    await loadCharacters();
+                    renderCharacterPanel();
+                } else {
+                    alert('删除失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('删除角色失败:', error);
+                alert('删除失败');
+            }
+        }
+        
+        async function loadWorldbook() {
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/list`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allWorldbookEntries = data.entries;
+                }
+            } catch (error) {
+                console.error('加载世界书失败:', error);
+            }
+        }
+        
+        function toggleWorldbookPanel() {
+            closeAllPanels();
+            const panel = document.getElementById('worldbookPanel');
+            const overlay = document.getElementById('modelOverlay');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                renderWorldbookPanel();
+            }
+        }
+        
+        function renderWorldbookPanel() {
+            const body = document.getElementById('worldbookPanelBody');
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 16px; color: #e5e5e5;">世界书条目</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="create-btn" onclick="showCreateWorldbookForm()">+ 创建条目</button>
+                        <button class="create-btn" onclick="importWorldbook()" style="background: #2196f3;"> 导入</button>
+                        <button class="create-btn" onclick="saveCurrentWorldbook()" style="background: #4caf50;">💾 保存</button>
+                    </div>
+                </div>
+                <div style="background: #171717; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 12px; color: #a3a3a3; border: 1px solid #262626;">
+                    💡 <strong>世界书是什么？</strong><br>
+                    世界书记录了角色所处的世界背景，如世界观、地点、历史、规则等。AI会参考这些信息来给出更符合世界设定的回复。
+                </div>
+                <div class="worldbook-list">
+            `;
+            
+            allWorldbookEntries.forEach(entry => {
+                html += `
+                    <div class="worldbook-item ${!entry.is_active ? 'inactive' : ''}">
+                        <div class="worldbook-header">
+                            <span class="worldbook-title">${entry.title}</span>
+                            <span class="worldbook-category">${entry.category}</span>
+                        </div>
+                        <div class="worldbook-content">${entry.content.substring(0, 100)}${entry.content.length > 100 ? '...' : ''}</div>
+                        <div class="worldbook-actions">
+                            <button class="worldbook-btn btn-toggle ${!entry.is_active ? 'inactive' : ''}" 
+                                    onclick="toggleWorldbookEntry('${entry.id}')">
+                                ${entry.is_active ? '✓ 已激活' : '○ 未激活'}
+                            </button>
+                            <button class="worldbook-btn btn-edit" onclick="showEditWorldbookForm('${entry.id}')">编辑</button>
+                            <button class="worldbook-btn btn-delete" onclick="deleteWorldbookEntry('${entry.id}')">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            html += '<div id="worldbookFormContainer"></div>';
+            body.innerHTML = html;
+        }
+        
+        async function toggleWorldbookEntry(entryId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/toggle/${entryId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadWorldbook();
+                    renderWorldbookPanel();
+                    addMessage('ai', `✅ ${data.message}`);
+                }
+            } catch (error) {
+                console.error('切换世界书条目失败:', error);
+            }
+        }
+        
+        async function deleteWorldbookEntry(entryId) {
+            if (!confirm('确定要删除这个条目吗？')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/delete/${entryId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadWorldbook();
+                    renderWorldbookPanel();
+                    addMessage('ai', `✅ 条目已删除`);
+                }
+            } catch (error) {
+                console.error('删除世界书条目失败:', error);
+            }
+        }
+        
+        function showCreateWorldbookForm() {
+            const container = document.getElementById('worldbookFormContainer');
+            container.innerHTML = `
+                <div class="character-form">
+                    <h3 style="margin-top: 0; color: #e5e5e5;">创建世界书条目</h3>
+                    
+                    <!-- AI辅助创建区域 -->
+                    <div class="ai-assist-section">
+                        <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #e5e5e5;">🤖 AI辅助创建</h4>
+                        <p style="margin: 0 0 12px 0; font-size: 12px; color: #737373;">
+                            描述你想要的世界背景，AI会自动帮你填写条目信息
+                        </p>
+                        <textarea id="wbAiStoryInput" placeholder="例如：我想创建一个中世纪奇幻世界，有精灵、矮人和人类三个种族，魔法是稀缺资源..." style="min-height: 80px; margin-bottom: 12px;"></textarea>
+                        <button class="form-btn primary" onclick="aiGenerateWorldbook()" id="wbAiGenerateBtn">
+                            ✨ 让AI帮我创建
+                        </button>
+                        <div id="wbAiGenerateStatus" style="margin-top: 8px; font-size: 12px; color: #a3a3a3; display: none;">
+                            🤖 AI正在思考中...
+                        </div>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid #262626; margin: 20px 0;">
+                    
+                    <div class="form-group">
+                        <label>条目ID（英文，不可修改）</label>
+                        <input type="text" id="wbFormId" placeholder="例如：magic_world_rules">
+                    </div>
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" id="wbFormTitle" placeholder="例如：魔法规则">
+                    </div>
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="wbFormCategory" style="width: 100%; padding: 10px 12px; border: 1px solid #262626; border-radius: 8px; font-size: 13px; background: #0a0a0a; color: #e5e5e5;">
+                            <option value="general">通用</option>
+                            <option value="character">角色</option>
+                            <option value="location">地点</option>
+                            <option value="item">物品</option>
+                            <option value="lore">传说/历史</option>
+                            <option value="rule">规则</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>内容（详细描述这个世界背景）</label>
+                        <textarea id="wbFormContent" style="min-height: 120px;" placeholder="详细描述这个条目的内容，例如：在这个魔法世界中，魔法师分为五个等级..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>标签（用逗号分隔）</label>
+                        <input type="text" id="wbFormTags" placeholder="例如：魔法,规则,等级">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-btn secondary" onclick="hideWorldbookForm()">取消</button>
+                        <button class="form-btn primary" onclick="createWorldbookEntry()">创建</button>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+        
+        function showEditWorldbookForm(entryId) {
+            const entry = allWorldbookEntries.find(e => e.id === entryId);
+            if (!entry) return;
+            
+            const container = document.getElementById('worldbookFormContainer');
+            container.innerHTML = `
+                <div class="character-form">
+                    <h3 style="margin-top: 0; color: #e5e5e5;">编辑世界书条目</h3>
+                    
+                    <!-- AI辅助修改区域 -->
+                    <div class="ai-assist-section">
+                        <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #e5e5e5;">🤖 AI辅助修改</h4>
+                        <p style="margin: 0 0 12px 0; font-size: 12px; color: #737373;">
+                            描述你想要修改的内容，AI会自动帮你更新世界书条目
+                        </p>
+                        <textarea id="wbAiModifyInput" placeholder="例如：增加更多关于魔法等级的详细描述，补充每个等级的特点和能力..." style="min-height: 80px; margin-bottom: 12px;"></textarea>
+                        <button class="form-btn primary" onclick="aiModifyWorldbook('${entryId}')" id="wbAiModifyBtn">
+                            ✨ 让AI帮我修改
+                        </button>
+                        <div id="wbAiModifyStatus" style="margin-top: 8px; font-size: 12px; color: #a3a3a3; display: none;">
+                            🤖 AI正在修改中...
+                        </div>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid #262626; margin: 20px 0;">
+                    
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" id="wbFormTitle" value="${entry.title}">
+                    </div>
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="wbFormCategory" style="width: 100%; padding: 10px 12px; border: 1px solid #262626; border-radius: 8px; font-size: 13px; background: #0a0a0a; color: #e5e5e5;">
+                            <option value="general" ${entry.category === 'general' ? 'selected' : ''}>通用</option>
+                            <option value="character" ${entry.category === 'character' ? 'selected' : ''}>角色</option>
+                            <option value="location" ${entry.category === 'location' ? 'selected' : ''}>地点</option>
+                            <option value="item" ${entry.category === 'item' ? 'selected' : ''}>物品</option>
+                            <option value="lore" ${entry.category === 'lore' ? 'selected' : ''}>传说/历史</option>
+                            <option value="rule" ${entry.category === 'rule' ? 'selected' : ''}>规则</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>内容</label>
+                        <textarea id="wbFormContent" style="min-height: 120px;">${entry.content}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>标签（用逗号分隔）</label>
+                        <input type="text" id="wbFormTags" value="${entry.tags.join(', ')}">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-btn secondary" onclick="hideWorldbookForm()">取消</button>
+                        <button class="form-btn primary" onclick="updateWorldbookEntry('${entryId}')">保存</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function hideWorldbookForm() {
+            const container = document.getElementById('worldbookFormContainer');
+            container.innerHTML = '';
+        }
+        
+        function importWorldbook() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                try {
+                    const text = await file.text();
+                    let worldbookData;
+                    
+                    try {
+                        worldbookData = JSON.parse(text);
+                    } catch (parseError) {
+                        alert('JSON格式错误: ' + parseError.message);
+                        return;
+                    }
+                    
+                    // 支持单个条目或条目数组
+                    const entries = Array.isArray(worldbookData) ? worldbookData : [worldbookData];
+                    
+                    let importedCount = 0;
+                    let skippedCount = 0;
+                    
+                    for (const entry of entries) {
+                        // 验证必要字段
+                        if (!entry.title || !entry.content) {
+                            skippedCount++;
+                            continue;
+                        }
+                        
+                        // 生成ID（如果没有）
+                        const entryId = entry.id || 'wb_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+                        
+                        const data = {
+                            id: entryId,
+                            title: entry.title,
+                            content: entry.content,
+                            category: entry.category || 'general',
+                            tags: entry.tags || [],
+                            is_active: entry.is_active !== undefined ? entry.is_active : true
+                        };
+                        
+                        try {
+                            const response = await fetch(`${API_BASE}/api/worldbook/create`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data)
+                            });
+                            
+                            const result = await response.json();
+                            if (result.success) {
+                                importedCount++;
+                            } else {
+                                skippedCount++;
+                            }
+                        } catch (err) {
+                            skippedCount++;
+                        }
+                    }
+                    
+                    await loadWorldbook();
+                    renderWorldbookPanel();
+                    
+                    let msg = `✅ 导入完成！成功导入 ${importedCount} 个条目`;
+                    if (skippedCount > 0) {
+                        msg += `，跳过 ${skippedCount} 个无效条目`;
+                    }
+                    alert(msg);
+                    
+                } catch (error) {
+                    console.error('导入世界书失败:', error);
+                    alert('❌ 导入失败: ' + error.message);
+                }
+            };
+            input.click();
+        }
+        
+        async function saveCurrentWorldbook() {
+            const wbFormTitle = document.getElementById('wbFormTitle');
+            const wbFormContent = document.getElementById('wbFormContent');
+            
+            if (!wbFormTitle || !wbFormContent) {
+                alert('请先创建或编辑一个世界书条目');
+                return;
+            }
+            
+            const title = wbFormTitle.value.trim();
+            const content = wbFormContent.value.trim();
+            
+            if (!title || !content) {
+                alert('请填写标题和内容');
+                return;
+            }
+            
+            const category = document.getElementById('wbFormCategory').value;
+            const tagsStr = document.getElementById('wbFormTags').value.trim();
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+            
+            // 查找是否有正在编辑的条目
+            const editBtn = document.getElementById('wbAiModifyBtn');
+            let entryId = null;
+            
+            // 尝试从编辑表单中获取ID
+            const wbFormId = document.getElementById('wbFormId');
+            if (wbFormId && wbFormId.value.trim()) {
+                entryId = wbFormId.value.trim();
+            }
+            
+            try {
+                let response;
+                
+                if (entryId && allWorldbookEntries.find(e => e.id === entryId)) {
+                    response = await fetch(`${API_BASE}/api/worldbook/update/${entryId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ title, content, category, tags })
+                    });
+                } else {
+                    const newId = entryId || 'entry_' + Date.now();
+                    response = await fetch(`${API_BASE}/api/worldbook/create`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: newId, title, content, category, tags })
+                    });
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ 保存成功！');
+                    hideWorldbookForm();
+                    await loadWorldbook();
+                    renderWorldbookPanel();
+                } else {
+                    alert('❌ 保存失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('保存世界书失败:', error);
+                alert('❌ 保存失败，请检查网络连接');
+            }
+        }
+        
+        async function aiGenerateWorldbook() {
+            const story = document.getElementById('wbAiStoryInput').value.trim();
+            if (!story) {
+                alert('请先描述你想要的世界背景');
+                return;
+            }
+            
+            const btn = document.getElementById('wbAiGenerateBtn');
+            const status = document.getElementById('wbAiGenerateStatus');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ AI正在生成中...';
+            status.style.display = 'block';
+            status.textContent = '🤖 AI正在思考中，请稍候...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/ai-generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ story })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const entry = data.entry;
+                    
+                    // 填入表单
+                    document.getElementById('wbFormId').value = entry.id || '';
+                    document.getElementById('wbFormTitle').value = entry.title || '';
+                    document.getElementById('wbFormCategory').value = entry.category || 'general';
+                    document.getElementById('wbFormContent').value = entry.content || '';
+                    document.getElementById('wbFormTags').value = (entry.tags || []).join(', ');
+                    
+                    status.style.color = '#4caf50';
+                    status.textContent = '✅ AI已生成世界书条目，你可以检查并修改后点击"创建"';
+                } else {
+                    status.style.color = '#f44336';
+                    status.textContent = '❌ ' + data.message;
+                }
+            } catch (error) {
+                console.error('AI生成世界书失败:', error);
+                status.style.color = '#f44336';
+                status.textContent = '❌ 生成失败，请检查网络连接';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✨ 让AI帮我创建';
+            }
+        }
+        
+        async function createWorldbookEntry() {
+            const id = document.getElementById('wbFormId').value.trim();
+            const title = document.getElementById('wbFormTitle').value.trim();
+            const category = document.getElementById('wbFormCategory').value;
+            const content = document.getElementById('wbFormContent').value.trim();
+            const tagsStr = document.getElementById('wbFormTags').value.trim();
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+            
+            if (!id || !title || !content) {
+                alert('请填写条目ID、标题和内容');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, title, content, category, tags, is_active: true })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('世界书条目创建成功！');
+                    hideWorldbookForm();
+                    await loadWorldbook();
+                    renderWorldbookPanel();
+                } else {
+                    alert('创建失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('创建世界书条目失败:', error);
+                alert('创建失败，请检查网络连接');
+            }
+        }
+        
+        async function updateWorldbookEntry(entryId) {
+            const title = document.getElementById('wbFormTitle').value.trim();
+            const category = document.getElementById('wbFormCategory').value;
+            const content = document.getElementById('wbFormContent').value.trim();
+            const tagsStr = document.getElementById('wbFormTags').value.trim();
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/worldbook/update/${entryId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, category, tags })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('世界书条目更新成功！');
+                    hideWorldbookForm();
+                    await loadWorldbook();
+                    renderWorldbookPanel();
+                } else {
+                    alert('更新失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('更新世界书条目失败:', error);
+                alert('更新失败，请检查网络连接');
+            }
+        }
+        
+        function toggleSettingsPanel() {
+            closeAllPanels();
+            const panel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('modelOverlay');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                renderSettingsPanel();
+            }
+        }
+        
+        function loadSettings() {
+            const saved = localStorage.getItem('chatSettings');
+            if (saved) {
+                try {
+                    chatSettings = JSON.parse(saved);
+                } catch (e) {
+                    console.error('加载设置失败:', e);
+                }
+            }
+        }
+        
+        function saveSettings() {
+            localStorage.setItem('chatSettings', JSON.stringify(chatSettings));
+        }
+        
+        function renderSettingsPanel() {
+            const body = document.getElementById('settingsPanelBody');
+            
+            let html = `
+                <div class="settings-section">
+                    <div class="settings-title">🔑 API Key 配置</div>
+                    <p style="font-size: 12px; color: #737373; margin-bottom: 16px;">
+                        配置各模型的API Key后才能使用对应模型。Key会安全保存在服务器的.env文件中。
+                    </p>
+                    <div id="apiKeyConfigContainer">
+                        <p style="text-align: center; color: #737373; padding: 20px;">加载中...</p>
+                    </div>
+                </div>
+                
+                <hr style="border: none; border-top: 1px solid #262626; margin: 20px 0;">
+                
+                <div class="settings-section">
+                    <div class="settings-title">🌡️ 温度 (Temperature)</div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="100" value="${chatSettings.temperature * 100}" 
+                               oninput="updateTemperature(this.value)">
+                        <span class="slider-value">${chatSettings.temperature.toFixed(2)}</span>
+                    </div>
+                    <p style="font-size: 12px; color: #737373; margin-top: 8px;">
+                        控制回复的创造性。值越高越有创意，值越低越保守。
+                    </p>
+                </div>
+                
+                <div class="settings-section">
+                    <div class="settings-title"> 最大Token数</div>
+                    <div class="slider-container">
+                        <input type="range" min="500" max="4000" step="100" value="${chatSettings.max_tokens}" 
+                               oninput="updateMaxTokens(this.value)">
+                        <span class="slider-value">${chatSettings.max_tokens}</span>
+                    </div>
+                    <p style="font-size: 12px; color: #737373; margin-top: 8px;">
+                        限制AI回复的最大长度。
+                    </p>
+                </div>
+                
+                <div class="settings-section">
+                    <div class="settings-title"> Top P</div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="100" value="${chatSettings.top_p * 100}" 
+                               oninput="updateTopP(this.value)">
+                        <span class="slider-value">${chatSettings.top_p.toFixed(2)}</span>
+                    </div>
+                    <p style="font-size: 12px; color: #737373; margin-top: 8px;">
+                        控制回复的多样性。值越高越多样化。
+                    </p>
+                </div>
+            `;
+            
+            body.innerHTML = html;
+            
+            // 加载API Key配置
+            loadApiKeyConfig();
+        }
+        
+        async function loadApiKeyConfig() {
+            const container = document.getElementById('apiKeyConfigContainer');
+            if (!container) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/models/api-keys`);
+                const data = await response.json();
+                
+                if (!data.success || !data.providers) {
+                    container.innerHTML = '<p style="color: #f44336;">加载API Key配置失败</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const [provider, config] of Object.entries(data.providers)) {
+                    const statusIcon = config.configured ? '✅' : '';
+                    const statusText = config.configured ? '已配置' : '未配置';
+                    const maskedKey = config.masked_key || '';
+                    
+                    html += `
+                        <div class="api-key-item" style="background: #171717; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #262626;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 14px; font-weight: 600; color: #e5e5e5;">${statusIcon} ${provider}</span>
+                                <span style="font-size: 12px; color: ${config.configured ? '#4caf50' : '#f44336'};">${statusText}</span>
+                            </div>
+                            ${maskedKey ? `<p style="font-size: 11px; color: #737373; margin-bottom: 8px;">当前Key: ${maskedKey}</p>` : ''}
+                            <div style="display: flex; gap: 8px;">
+                                <input type="password" id="apiKey_${provider}" placeholder="输入API Key" 
+                                       style="flex: 1; padding: 8px 12px; border: 1px solid #262626; border-radius: 6px; background: #0a0a0a; color: #e5e5e5; font-size: 13px;">
+                                <button class="form-btn primary" onclick="saveApiKey('${provider}', '${config.env_name}')" 
+                                        style="padding: 8px 16px; white-space: nowrap;">保存</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('加载API Key配置失败:', error);
+                container.innerHTML = '<p style="color: #f44336;">加载失败，请检查网络连接</p>';
+            }
+        }
+        
+        async function saveApiKey(provider, envName) {
+            const input = document.getElementById(`apiKey_${provider}`);
+            const apiKey = input.value.trim();
+            
+            if (!apiKey) {
+                alert('请输入API Key');
+                return;
+            }
+            
+            const btn = input.nextElementSibling;
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '保存中...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/models/api-keys`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        env_name: envName,
+                        api_key: apiKey
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ API Key保存成功！');
+                    input.value = '';
+                    // 重新加载配置
+                    await loadApiKeyConfig();
+                    // 重新加载模型列表
+                    await loadModels();
+                } else {
+                    alert('❌ 保存失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('保存API Key失败:', error);
+                alert(' 保存失败，请检查网络连接');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+        
+        function updateTemperature(value) {
+            chatSettings.temperature = value / 100;
+            document.querySelector('.slider-value').textContent = chatSettings.temperature.toFixed(2);
+            saveSettings();
+        }
+        
+        function updateMaxTokens(value) {
+            chatSettings.max_tokens = parseInt(value);
+            saveSettings();
+        }
+        
+        function updateTopP(value) {
+            chatSettings.top_p = value / 100;
+            saveSettings();
+        }
+        
+        // ===== 角色独立聊天界面 =====
+        let chatHistories = {};
+        let lastDeletedMessage = localStorage.getItem('lastDeletedMessage') ? JSON.parse(localStorage.getItem('lastDeletedMessage')) : null;
+        
+        function loadChatForCharacter(characterId) {
+            const saved = localStorage.getItem(`chat_${characterId}`);
+            chatHistories[characterId] = saved ? JSON.parse(saved) : [];
+            renderChatMessages(characterId);
+        }
+        
+        function saveChatForCharacter(characterId) {
+            localStorage.setItem(`chat_${characterId}`, JSON.stringify(chatHistories[characterId] || []));
+        }
+        
+        function renderChatMessages(characterId) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messages = chatHistories[characterId] || [];
+            
+            if (messages.length === 0) {
+                const char = allCharacters.find(c => c.id === characterId);
+                messagesContainer.innerHTML = `
+                    <div class="message ai">
+                        <div class="avatar">${char ? char.avatar : '🤖'}</div>
+                        <div class="message-bubble">
+                            ${char ? char.greeting : '你好！有什么可以帮助你的吗？'}
+                            <div class="message-time">刚刚</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            messagesContainer.innerHTML = '';
+            messages.forEach(msg => {
+                addMessageToContainer(msg.role, msg.content, msg.time, msg.id, false);
+            });
+        }
+        
+        function addMessageToContainer(role, content, time, msgId, saveToHistory = true) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.id = `msg-${msgId}`;
+            
+            messageDiv.innerHTML = `
+                <div class="avatar">${role === 'ai' ? (allCharacters.find(c => c.id === currentCharacterId)?.avatar || '🤖') : '👤'}</div>
+                <div class="message-bubble">
+                    ${content}
+                    <div class="message-actions">
+                        <button class="msg-action-btn" onclick="deleteMessage('${msgId}')" title="删除">🗑️</button>
+                    </div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            if (saveToHistory) {
+                if (!chatHistories[currentCharacterId]) {
+                    chatHistories[currentCharacterId] = [];
+                }
+                chatHistories[currentCharacterId].push({ role, content, time, id: msgId });
+                saveChatForCharacter(currentCharacterId);
+            }
+        }
+        
+        function deleteMessage(msgId) {
+            const msgEl = document.getElementById(`msg-${msgId}`);
+            if (msgEl) {
+                const messages = chatHistories[currentCharacterId] || [];
+                const msgIndex = messages.findIndex(m => m.id === msgId);
+                if (msgIndex !== -1) {
+                    lastDeletedMessage = { ...messages[msgIndex], index: msgIndex };
+                    localStorage.setItem('lastDeletedMessage', JSON.stringify(lastDeletedMessage));
+                    messages.splice(msgIndex, 1);
+                    saveChatForCharacter(currentCharacterId);
+                }
+                msgEl.remove();
+            }
+        }
+        
+        function undoDelete() {
+            if (lastDeletedMessage) {
+                const messages = chatHistories[currentCharacterId] || [];
+                messages.splice(lastDeletedMessage.index, 0, {
+                    role: lastDeletedMessage.role,
+                    content: lastDeletedMessage.content,
+                    time: lastDeletedMessage.time,
+                    id: lastDeletedMessage.id
+                });
+                saveChatForCharacter(currentCharacterId);
+                renderChatMessages(currentCharacterId);
+                lastDeletedMessage = null;
+                localStorage.removeItem('lastDeletedMessage');
+            }
+        }
+        
+        function clearCurrentChat() {
+            if (!confirm('确定要清空当前角色的聊天记录吗？')) return;
+            chatHistories[currentCharacterId] = [];
+            saveChatForCharacter(currentCharacterId);
+            renderChatMessages(currentCharacterId);
+        }
+        
+        function recallLastMessage() {
+            const messages = chatHistories[currentCharacterId] || [];
+            if (messages.length >= 2) {
+                messages.pop();
+                messages.pop();
+                saveChatForCharacter(currentCharacterId);
+                renderChatMessages(currentCharacterId);
+            } else if (messages.length > 0) {
+                messages.pop();
+                saveChatForCharacter(currentCharacterId);
+                renderChatMessages(currentCharacterId);
+            }
+        }
+        
+        // 重写sendMessage函数以使用新的消息系统
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            const msgId = 'msg-' + Date.now();
+            
+            addMessageToContainer('user', message, time, msgId);
+            input.value = '';
+            
+            showTypingIndicator();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/chat/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: USER_ID,
+                        message: message,
+                        enable_tts: true
+                    })
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator();
+                
+                if (data.success) {
+                    const aiTime = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                    const aiMsgId = 'msg-' + (Date.now() + 1);
+                    addMessageToContainer('ai', data.reply, aiTime, aiMsgId);
+                } else {
+                    addMessage('ai', '抱歉，出现了错误，请稍后重试。');
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('ai', '抱歉，无法连接到服务器。');
+                console.error('Error:', error);
+            }
+        }
+        
+        // ===== 帮助面板 =====
+        function toggleHelpPanel() {
+            closeAllPanels();
+            const panel = document.getElementById('helpPanel');
+            const overlay = document.getElementById('modelOverlay');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                renderHelpPanel();
+            }
+        }
+        
+        function renderHelpPanel() {
+            const body = document.getElementById('helpPanelBody');
+            body.innerHTML = `
+                <div class="help-content">
+                    <h3>📖 使用帮助</h3>
+                    
+                    <div class="help-section">
+                        <h4>👤 角色预设</h4>
+                        <p>角色预设允许你创建不同的AI角色，每个角色有独特的性格和对话风格。</p>
+                        <ul>
+                            <li>点击"角色"按钮打开角色面板</li>
+                            <li>点击角色卡片切换角色</li>
+                            <li>点击"+ 创建角色"创建自定义角色</li>
+                            <li>每个角色有独立的聊天记录</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>📚 世界书</h4>
+                        <p>世界书记录了角色所处的世界背景，让AI更了解自己所处的"世界"。</p>
+                        <ul>
+                            <li><strong>通用</strong>：世界观、背景设定</li>
+                            <li><strong>角色</strong>：NPC、人物关系</li>
+                            <li><strong>地点</strong>：城市、建筑、场景</li>
+                            <li><strong>物品</strong>：道具、装备、魔法物品</li>
+                            <li><strong>传说/历史</strong>：世界历史、传说故事</li>
+                            <li><strong>规则</strong>：魔法规则、社会制度</li>
+                        </ul>
+                        <p>激活的条目会被AI参考，给出更符合世界设定的回复。</p>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>💬 聊天功能</h4>
+                        <ul>
+                            <li>每条消息右侧有🗑️按钮可以删除</li>
+                            <li>点击"回溯"按钮可以撤回最后一轮对话</li>
+                            <li>点击"清空"按钮可以清空当前角色的聊天记录</li>
+                            <li>切换角色会自动加载该角色的聊天记录</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>🎯 模型广场</h4>
+                        <p>支持多个AI模型，可以在模型广场中切换。</p>
+                        <ul>
+                            <li>点击"模型广场"按钮打开模型列表</li>
+                            <li>在底部可以配置各模型的API Key</li>
+                            <li>未配置API Key的模型无法使用</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>⚙️ 聊天设置</h4>
+                        <ul>
+                            <li><strong>温度</strong>：控制回复创造性（0-1）</li>
+                            <li><strong>最大Token数</strong>：限制回复长度</li>
+                            <li><strong>Top P</strong>：控制回复多样性（0-1）</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
