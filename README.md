@@ -14,9 +14,11 @@ ai_chat_system/
 │   │   ├── services/       # 业务服务
 │   │   │   ├── llm_service.py      # AI对话服务（支持多模型）
 │   │   │   ├── tts_service.py      # 语音合成服务
-│   │   │   └── model_registry.py   # 模型注册表（模型广场核心）
+│   │   │   ├── model_registry.py   # 模型注册表（模型广场核心）
+│   │   │   └── model_discovery.py  # 模型发现服务（动态拉取可用模型）
 │   │   ├── plugins/        # 插件系统
 │   │   └── scripts/        # 脚本系统
+│   ├── .env.example        # 环境变量配置模板
 │   └── requirements.txt    # Python依赖
 ├── frontend/               # 前端代码
 │   └── index.html          # 聊天界面（含模型选择器）
@@ -51,10 +53,10 @@ copy .env.example .env
 
 ```bash
 cd backend
-C:\Trae\PyCharm_\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8001
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-服务将在 `http://localhost:8001` 启动
+服务将在 `http://localhost:8000` 启动
 
 ### 4. 打开前端
 
@@ -80,6 +82,14 @@ C:\Trae\PyCharm_\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0
 1. **前端界面**：点击聊天界面顶部的"模型广场"按钮，选择想要的模型
 2. **下拉选择器**：在聊天输入框上方直接选择模型
 3. **API调用**：通过 `POST /api/models/switch` 接口切换
+
+### 模型发现
+
+系统支持从供应商API动态拉取可用模型列表：
+
+1. 点击设置面板中的"🔍 从供应商拉取可用模型"按钮
+2. 系统会自动拉取已配置API Key的供应商的可用模型
+3. 点击"添加"按钮即可将新模型添加到系统中
 
 ### 添加新模型
 
@@ -135,6 +145,9 @@ class MyScript(BaseScript):
 - `GET /api/models/list` - 获取所有可用模型
 - `GET /api/models/current` - 获取当前使用的模型
 - `POST /api/models/switch` - 切换模型
+- `GET /api/models/discover` - 从所有供应商拉取可用模型
+- `GET /api/models/discover/{provider}` - 从指定供应商拉取可用模型
+- `POST /api/models/add-custom` - 添加自定义模型
 - `GET /api/models/providers` - 获取所有提供商列表
 
 ### 插件和脚本接口
@@ -152,3 +165,9 @@ class MyScript(BaseScript):
 - **AI模型**: 多模型支持（DeepSeek、OpenAI、通义千问等）
 - **语音合成**: OpenAI TTS
 - **前端**: 原生HTML/CSS/JavaScript
+
+## 注意事项
+
+- `.env` 文件包含敏感的API密钥，已添加到 `.gitignore` 中，不会被提交到Git仓库
+- 上传到Git前请确保 `.env` 文件不在版本控制中
+- 其他开发者克隆项目后需要复制 `.env.example` 为 `.env` 并填入自己的API密钥

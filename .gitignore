@@ -24,21 +24,21 @@ wheels/
 .venv/
 venv/
 ENV/
+env/
 
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
 
-# Environment variables
+# Environment Variables (包含敏感信息)
 .env
-.env.local
-.env.production
 
 # Database
 *.db
+*.sqlite
 *.sqlite3
 
 # OS
@@ -47,7 +47,6 @@ Thumbs.db
 
 # Logs
 *.log
-logs/
 
-# Node modules (如果有前端构建)
+# 前端开发工具
 node_modules/
