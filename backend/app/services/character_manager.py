@@ -42,6 +42,9 @@ class CharacterManager:
                         self.characters[char.id] = char
                         if char.is_default:
                             self.current_character_id = char.id
+                # 如果当前角色不存在，选择第一个角色
+                if self.current_character_id not in self.characters and self.characters:
+                    self.current_character_id = list(self.characters.keys())[0]
             except Exception as e:
                 print(f"加载角色预设失败: {e}")
     
@@ -87,6 +90,13 @@ class CharacterManager:
         """删除角色预设"""
         if character_id in self.characters:
             del self.characters[character_id]
+            
+            if self.current_character_id == character_id:
+                if self.characters:
+                    self.current_character_id = list(self.characters.keys())[0]
+                else:
+                    self.current_character_id = "default"
+            
             self._save_characters()
             return True
         return False

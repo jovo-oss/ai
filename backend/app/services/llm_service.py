@@ -94,5 +94,83 @@ class LLMService:
             return eval(result)
         except:
             return {}
+    
+    async def vision_completion(
+        self,
+        messages: List[Dict[str, str]],
+        system_prompt: Optional[str] = None,
+        temperature: float = 0.7,
+        max_tokens: int = 1000,
+        image_base64: Optional[str] = None,
+        model_id: Optional[str] = None
+    ) -> str:
+        """
+        获取AI视觉分析回复（支持图片输入）
+        :param messages: 聊天消息历史
+        :param system_prompt: 系统提示词
+        :param temperature: 创造性程度 (0-1)
+        :param max_tokens: 最大token数
+        :param image_base64: 图片的base64编码
+        :param model_id: 指定使用的模型（可选，不指定则使用当前模型）
+        :return: AI回复文本
+        """
+        # 如果指定了模型，临时切换
+        original_model = None
+        if model_id:
+            original_model = self.current_model_config.id
+            self.switch_model(model_id)
+        
+        try:
+            # 构建消息列表
+            if system_prompt:
+                messages = [{"role": "system", "content": system_prompt}] + messages
+            
+            # 添加图片消息
+            if image_base64:
+                # 检查是否已有用户消息，如果有则在最后一条用户消息中添加图片
+                user_message_found = False
+                for i in range(len(messages) - 1, -1, -1):
+                    if messages[i].get("role") == "user":
+                        # 在现有用户消息中添加图片
+                        current_content = messages[i]["content"]
+                        messages[i]["content"] = [
+                            {"type": "text", "text": current_content},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_base64}"
+                                }
+                            }
+                        ]
+                        user_message_found = True
+                        break
+                
+                # 如果没有用户消息，创建一个新的
+                if not user_message_found:
+                    messages.append({
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "请分析这张图片"},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_base64}"
+                                }
+                            }
+                        ]
+                    })
+            
+            response = await self.client.chat.completions.create(
+                model=self.current_model_config.model_name,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+            
+            return response.choices[0].message.content
+        finally:
+            # 恢复原来的模型
+            if original_model:
+                self.switch_model(original_model)
 
 llm_service = LLMService()

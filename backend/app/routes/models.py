@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from app.services.model_registry import model_registry, ModelConfig
 from app.services.llm_service import llm_service
 from app.services.model_discovery import model_discovery
+from app.models.database import SessionLocal, UserApiKey
 import os
 import dotenv
 import asyncio
@@ -26,10 +27,48 @@ class SwitchModelResponse(BaseModel):
 class ApiKeyConfig(BaseModel):
     env_name: str
     api_key: str
+    provider: str
 
 class ApiKeyResponse(BaseModel):
     success: bool
     message: str
+
+def get_user_api_key(user_id: int, provider: str) -> Optional[str]:
+    """获取用户的API密钥"""
+    db = SessionLocal()
+    try:
+        api_key_record = db.query(UserApiKey).filter(
+            UserApiKey.user_id == user_id,
+            UserApiKey.provider == provider
+        ).first()
+        return api_key_record.api_key if api_key_record else None
+    finally:
+        db.close()
+
+def save_user_api_key(user_id: int, provider: str, env_name: str, api_key: str):
+    """保存用户的API密钥"""
+    db = SessionLocal()
+    try:
+        api_key_record = db.query(UserApiKey).filter(
+            UserApiKey.user_id == user_id,
+            UserApiKey.provider == provider
+        ).first()
+        
+        if api_key_record:
+            api_key_record.api_key = api_key
+            api_key_record.env_name = env_name
+        else:
+            new_record = UserApiKey(
+                user_id=user_id,
+                provider=provider,
+                env_name=env_name,
+                api_key=api_key
+            )
+            db.add(new_record)
+        
+        db.commit()
+    finally:
+        db.close()
 
 @router.get("/list", response_model=ModelListResponse)
 async def list_models():
@@ -110,12 +149,16 @@ async def get_current_model():
     }
 
 @router.get("/api-keys")
-async def get_api_keys_status():
-    """获取所有API密钥的配置状态"""
+async def get_api_keys_status(user_id: int = Query(default=1)):
+    """获取用户的API密钥配置状态"""
     providers = {}
     for model in model_registry.models.values():
         if model.provider not in providers:
-            api_key = model_registry.get_api_key(model.id)
+            # 优先使用用户API密钥，其次使用.env中的
+            api_key = get_user_api_key(user_id, model.provider)
+            if not api_key:
+                api_key = model_registry.get_api_key(model.id)
+            
             providers[model.provider] = {
                 "env_name": model.api_key_env,
                 "configured": bool(api_key),
@@ -128,34 +171,13 @@ async def get_api_keys_status():
     }
 
 @router.post("/api-keys", response_model=ApiKeyResponse)
-async def update_api_key(config: ApiKeyConfig):
-    """更新API密钥配置"""
-    env_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
-    
+async def update_api_key(config: ApiKeyConfig, user_id: int = Query(default=1)):
+    """更新用户的API密钥配置"""
     try:
-        # 读取现有的.env文件
-        lines = []
-        if os.path.exists(env_file):
-            with open(env_file, 'r', encoding='utf-8') as f:
-                lines = f.readlines()
+        # 保存到数据库
+        save_user_api_key(user_id, config.provider, config.env_name, config.api_key)
         
-        # 查找并更新对应的环境变量
-        found = False
-        for i, line in enumerate(lines):
-            if line.startswith(f"{config.env_name}="):
-                lines[i] = f"{config.env_name}={config.api_key}\n"
-                found = True
-                break
-        
-        # 如果没有找到，添加新的
-        if not found:
-            lines.append(f"\n{config.env_name}={config.api_key}\n")
-        
-        # 写回文件
-        with open(env_file, 'w', encoding='utf-8') as f:
-            f.writelines(lines)
-        
-        # 更新当前环境变量
+        # 同时更新环境变量（当前会话生效）
         os.environ[config.env_name] = config.api_key
         
         # 重新加载LLM服务
@@ -163,12 +185,12 @@ async def update_api_key(config: ApiKeyConfig):
         
         return ApiKeyResponse(
             success=True,
-            message=f"API密钥已更新"
+            message=f"API密钥已保存"
         )
     except Exception as e:
         return ApiKeyResponse(
             success=False,
-            message=f"更新失败: {str(e)}"
+            message=f"保存失败: {str(e)}"
         )
 
 @router.get("/discover")

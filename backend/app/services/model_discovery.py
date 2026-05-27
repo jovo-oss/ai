@@ -45,7 +45,7 @@ class ModelDiscoveryService:
         """同步拉取模型（在后台线程中运行）"""
         api_key = self.get_api_key(provider)
         if not api_key:
-            print(f"供应商 {provider} 的API Key未配置或为默认值")
+            print(f"供应商 {provider} 的API Key未配置或为默认值，跳过")
             return []
         
         config = self.PROVIDER_CONFIGS[provider]
@@ -54,7 +54,7 @@ class ModelDiscoveryService:
             client = OpenAI(
                 api_key=api_key,
                 base_url=config["base_url"],
-                timeout=15.0
+                timeout=8.0
             )
             
             models = client.models.list()
@@ -95,7 +95,7 @@ class ModelDiscoveryService:
         for future in as_completed(futures):
             provider = futures[future]
             try:
-                models = future.result(timeout=20)
+                models = future.result(timeout=10)
                 if models:
                     result[provider] = models
             except Exception as e:

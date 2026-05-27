@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI聊天系统 - 项目展示</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7b2ff7;
+            --accent: #ff6b35;
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(15, 23, 42, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-tech: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .presentation {
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: none;
+            position: relative;
+            padding: 60px 80px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+        }
+
+        /* Background Effects */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: var(--secondary);
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 30%;
+            animation-delay: 4s;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .slide-counter {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        /* Slide 1: Cover */
+        .slide-cover {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--gradient-3);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            animation: scaleIn 0.8s ease-out 0.2s both;
+        }
+
+        .main-title {
+            font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: scaleIn 0.8s ease-out 0.4s both;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 40px;
+            animation: slideInLeft 0.8s ease-out 0.6s both;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 50px;
+            animation: slideInRight 0.8s ease-out 0.8s both;
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .meta-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Slide Content Styles */
+        .section-header {
+            margin-bottom: 50px;
+        }
+
+        .section-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 800px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 20px;
+            padding: 35px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-3);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-3);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .card-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            display: grid;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 40px;
+            margin-top: 40px;
+            align-items: start;
+        }
+
+        .arch-layer {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .layer-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .layer-item {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .layer-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        .arch-center {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .core-module {
+            background: linear-gradient(135deg, rgba(123, 47, 247, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border: 2px solid rgba(123, 47, 247, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .core-module::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(123, 47, 247, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .module-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        .tech-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 25px 35px;
+            text-align: center;
+            min-width: 160px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tech-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .tech-logo {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .tech-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .tech-version {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Model Grid */
+        .model-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .model-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .model-card.deepseek::before { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+        .model-card.openai::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .model-card.aliyun::before { background: linear-gradient(90deg, #ff6b35, #f7931e); }
+        .model-card.zhipu::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
+        .model-card.baidu::before { background: linear-gradient(90deg, #ee0979, #ff6a00); }
+
+        .model-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .provider-badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deepseek .provider-badge { background: rgba(79, 172, 254, 0.2); color: #4facfe; }
+        .openai .provider-badge { background: rgba(102, 126, 234, 0.2); color: #667eea; }
+        .aliyun .provider-badge { background: rgba(255, 107, 53, 0.2); color: #ff6b35; }
+        .zhipu .provider-badge { background: rgba(17, 153, 142, 0.2); color: #11998e; }
+        .baidu .provider-badge { background: rgba(238, 9, 121, 0.2); color: #ee0979; }
+
+        .model-name {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .model-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Feature List with Icons */
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .feature-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .feature-item:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            transform: translateX(10px);
+            box-shadow: -5px 0 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .feature-icon-wrapper {
+            width: 55px;
+            height: 55px;
+            min-width: 55px;
+            background: var(--gradient-3);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.25);
+        }
+
+        .feature-content h4 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .feature-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.15);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 42px;
+            font-weight: 900;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Code Block Style */
+        .code-preview {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+            font-family: 'Rajdhani', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            overflow-x: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .code-line {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .code-keyword { color: #c792ea; }
+        .code-string { color: #c3e88d; }
+        .code-function { color: #82aaff; }
+        .code-comment { color: #546e7a; }
+        .code-class { color: #ffcb6b; }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 40px;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(123, 47, 247, 0.08) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.25);
+            border-radius: 20px;
+            padding: 35px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .highlight-box h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .highlight-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .highlight-box li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .highlight-box li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin-top: 40px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 35px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 5px;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Closing Slide */
+        .closing-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .thank-you {
+            font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+            font-size: 64px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            animation: scaleIn 0.8s ease-out;
+        }
+
+        .closing-message {
+            font-size: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .contact-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 25px 40px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .arch-diagram {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 30px;
+            }
+
+            .main-title {
+                font-size: 42px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .cards-grid,
+            .feature-list,
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-container {
+                top: 15px;
+                right: 20px;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 212, 255, 0.1);
+            z-index: 999;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-3);
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Keyboard hints */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            backdrop-filter: blur(10px);
+            z-index: 998;
+        }
+
+        .keyboard-hint kbd {
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin: 0 5px;
+            font-family: 'Rajdhani', monospace;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <span class="slide-counter" id="slideCounter">1 / 11</span>
+        <button class="nav-btn" onclick="prevSlide()">← 上一页</button>
+        <button class="nav-btn" onclick="nextSlide()">下一页 →</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 9.09%"></div>
+    </div>
+
+    <!-- Keyboard Hint -->
+    <div class="keyboard-hint">
+        按 <kbd>←</kbd> 或 <kbd>→</kbd> 键切换页面 | 按 <kbd>F</kbd> 全屏
+    </div>
+
+    <div class="presentation">
+        <!-- Slide 1: Cover -->
+        <div class="slide slide-cover active" data-slide="1">
+            <div class="cover-content">
+                <div class="badge">学业报告展示</div>
+                <h1 class="main-title">AI聊天系统</h1>
+                <p class="subtitle">可扩展的多模型智能对话平台 · 支持插件化架构</p>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <div class="meta-label">项目类型</div>
+                        <div class="meta-value">全栈开发项目</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">技术栈</div>
+                        <div class="meta-value">Python + FastAPI</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">开发周期</div>
+                        <div class="meta-value">2026学年</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Project Overview -->
+        <div class="slide" data-slide="2">
+            <div class="section-header">
+                <span class="section-number">01 / 项目概述</span>
+                <h2 class="section-title">什么是AI聊天系统？</h2>
+                <p class="section-subtitle">一个高度可扩展、支持多模型切换的智能对话平台，融合了先进的AI技术与人性化的交互体验</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="feature-card">
+                    <div class="card-icon">🤖</div>
+                    <h3 class="card-title">多模型智能引擎</h3>
+                    <p class="card-desc">集成DeepSeek、OpenAI、通义千问、智谱AI、百度文心等主流大语言模型，支持运行时动态无缝切换，满足不同场景需求。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">🧩</div>
+                    <h3 class="card-title">插件化架构</h3>
+                    <p class="card-desc">采用灵活的插件系统设计，开发者可轻松扩展功能模块，实现消息处理、情感分析、欢迎语等自定义能力。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">🎭</div>
+                    <h3 class="card-title">角色扮演系统</h3>
+                    <p class="card-desc">内置完整的角色卡管理功能，支持自定义角色设定、世界观构建，打造沉浸式角色扮演对话体验。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">🧠</div>
+                    <h3 class="card-title">长期记忆机制</h3>
+                    <p class="card-desc">具备持久化的记忆存储系统，能够记住用户的偏好、历史对话，提供个性化的连续对话服务。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">🔊</div>
+                    <h3 class="card-title">语音合成能力</h3>
+                    <p class="card-desc">集成OpenAI TTS语音合成技术，将文本转换为自然流畅的语音输出，增强交互的真实感和沉浸感。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">💬</div>
+                    <h3 class="card-title">多端接入支持</h3>
+                    <p class="card-desc">通过QQ机器人（go-cqhttp）接入社交平台，同时提供Web前端界面，实现多渠道统一服务。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: System Architecture -->
+        <div class="slide" data-slide="3">
+            <div class="section-header">
+                <span class="section-number">02 / 系统架构</span>
+                <h2 class="section-title">三层分离式架构设计</h2>
+                <p class="section-subtitle">采用前后端分离、服务层解耦的现代软件架构模式，确保系统的可维护性与可扩展性</p>
+            </div>
+
+            <div class="arch-diagram">
+                <div class="arch-layer">
+                    <div class="layer-title">📱 接入层</div>
+                    <div class="layer-item">Web 前端界面</div>
+                    <div class="layer-item">QQ 机器人 (go-cqhttp)</div>
+                    <div class="layer-item">Admin 管理后台</div>
+                    <div class="layer-item">RESTful API 接口</div>
+                </div>
+
+                <div class="arch-center">
+                    <div class="core-module">
+                        <div class="module-name">⚡ FastAPI 应用层</div>
+                        <div class="module-desc">高性能异步Web框架 · 路由分发 · 中间件处理</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="core-module" style="padding: 20px;">
+                            <div class="module-name" style="font-size: 15px;">🔄 路由层 (Routes)</div>
+                            <div class="module-desc" style="font-size: 12px;">18+ API路由模块</div>
+                        </div>
+                        
+                        <div class="core-module" style="padding: 20px;">
+                            <div class="module-name" style="font-size: 15px;">⚙️ 服务层 (Services)</div>
+                            <div class="module-desc" style="font-size: 12px;">25+ 业务服务组件</div>
+                        </div>
+                    </div>
+
+                    <div class="core-module">
+                        <div class="module-name">🔌 扩展层</div>
+                        <div class="module-desc">插件系统 (Plugins) · 脚本系统 (Scripts)</div>
+                    </div>
+                </div>
+
+                <div class="arch-layer">
+                    <div class="layer-title">💾 数据层</div>
+                    <div class="layer-item">SQLite 数据库</div>
+                    <div class="layer-item">SQLAlchemy ORM</div>
+                    <div class="layer-item">JSON 配置文件</div>
+                    <div class="layer-item">环境变量 (.env)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Technology Stack -->
+        <div class="slide" data-slide="4">
+            <div class="section-header">
+                <span class="section-number">03 / 技术栈</span>
+                <h2 class="section-title">核心技术选型</h2>
+                <p class="section-subtitle">基于成熟稳定的技术生态，确保项目的可靠性与性能表现</p>
+            </div>
+
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <div class="tech-logo">⚡</div>
+                    <div class="tech-name">FastAPI</div>
+                    <div class="tech-version">现代异步框架</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">🐍</div>
+                    <div class="tech-name">Python 3.13</div>
+                    <div class="tech-version">最新版本</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">🗄️</div>
+                    <div class="tech-name">SQLite</div>
+                    <div class="tech-version">轻量级数据库</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">🔗</div>
+                    <div class="tech-name">SQLAlchemy</div>
+                    <div class="tech-version">ORM框架</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">🤖</div>
+                    <div class="tech-name">OpenAI SDK</div>
+                    <div class="tech-version">多模型调用</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">🎨</div>
+                    <div class="tech-name">HTML/CSS/JS</div>
+                    <div class="tech-version">原生前端</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">🔊</div>
+                    <div class="tech-name">TTS Engine</div>
+                    <div class="tech-version">语音合成</div>
+                </div>
+
+                <div class="tech-item">
+                    <div class="tech-logo">📦</div>
+                    <div class="tech-name">Pydantic</div>
+                    <div class="tech-version">数据验证</div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 50px;">
+                <h3>🎯 技术选型优势</h3>
+                <ul>
+                    <li><strong>高性能异步架构：</strong>FastAPI基于Starlette和Pydantic，原生支持async/await，并发处理能力强</li>
+                    <li><strong>零配置部署：</strong>SQLite无需独立数据库服务器，适合快速开发和轻量级部署场景</li>
+                    <li><strong>类型安全：</strong>Pydantic提供严格的数据验证和序列化，减少运行时错误</li>
+                    <li><strong>生态丰富：</strong>Python生态系统完善，第三方库支持全面，社区活跃度高</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Multi-Model Support -->
+        <div class="slide" data-slide="5">
+            <div class="section-header">
+                <span class="section-number">04 / 核心功能</span>
+                <h2 class="section-title">模型广场 · 多模型智能切换</h2>
+                <p class="section-subtitle">集成国内外顶尖AI模型，根据任务需求灵活选择最佳模型，实现成本与效果的平衡优化</p>
+            </div>
+
+            <div class="model-showcase">
+                <div class="model-card deepseek">
+                    <span class="provider-badge">DeepSeek</span>
+                    <h3 class="model-name">DeepSeek V4 系列</h3>
+                    <p class="model-desc">国产开源大模型的佼佼者，Flash版本响应速度快成本低，Pro版本推理能力强。默认推荐使用。</p>
+                </div>
+
+                <div class="model-card openai">
+                    <span class="provider-badge">OpenAI</span>
+                    <h3 class="model-name">GPT-4o / GPT-4o-mini</h3>
+                    <p class="model-desc">业界标杆级别的多模态模型，具备强大的理解能力和创造力，支持图像输入等高级功能。</p>
+                </div>
+
+                <div class="model-card aliyun">
+                    <span class="provider-badge">阿里云</span>
+                    <h3 class="model-name">通义千问 Qwen系列</h3>
+                    <p class="model-desc">阿里云自研大语言模型，中文理解能力出色，Qwen-Max为当前最强版本，性价比高。</p>
+                </div>
+
+                <div class="model-card zhipu">
+                    <span class="provider-badge">智谱AI</span>
+                    <h3 class="model-name">GLM-4</h3>
+                    <p class="model-desc">智谱AI最新一代大模型，在中文生成、逻辑推理等方面表现优异，学术研究首选之一。</p>
+                </div>
+
+                <div class="model-card baidu">
+                    <span class="provider-badge">百度</span>
+                    <h3 class="model-name">文心一言 ERNIE 4.0</h3>
+                    <p class="model-desc">百度自主研发的知识增强大语言模型，中文知识图谱整合能力强，适合知识密集型任务。</p>
+                </div>
+            </div>
+
+            <div class="code-preview" style="margin-top: 40px;">
+                <span class="code-line"><span class="code-comment"># 模型注册示例 - model_registry.py</span></span>
+                <span class="code-line"><span class="code-keyword">self</span>.register(ModelConfig(</span>
+                <span class="code-line">    <span class="code-string">id</span>=<span class="code-string">"deepseek-v4-flash"</span>,</span>
+                <span class="code-line">    <span class="code-string">name</span>=<span class="code-string">"DeepSeek V4 Flash"</span>,</span>
+                <span class="code-line">    <span class="code-string">provider</span>=<span class="code-string">"DeepSeek"</span>,</span>
+                <span class="code-line">    <span class="code-string">base_url</span>=<span class="code-string">"https://api.deepseek.com/v1"</span>,</span>
+                <span class="code-line">    <span class="code-string">features</span>=[<span class="code-string">"快速响应"</span>, <span class="code-string">"低成本"</span>, <span class="code-string">"中文优化"</span>]</span>
+                <span class="code-line">))</span>
+            </div>
+        </div>
+
+        <!-- Slide 6: Advanced Features -->
+        <div class="slide" data-slide="6">
+            <div class="section-header">
+                <span class="section-number">05 / 智能特性</span>
+                <h2 class="section-title">智能化功能矩阵</h2>
+                <p class="section-subtitle">超越传统聊天机器人，融入记忆、感知、主动性等拟人化智能特性</p>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">🧠</div>
+                    <div class="feature-content">
+                        <h4>长期记忆系统</h4>
+                        <p>持久化存储用户对话历史、偏好设置、重要事件。支持自动摘要、关键词提取、语义检索，让AI真正"记住"你。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">⏰</div>
+                    <div class="feature-content">
+                        <h4>时间感知能力</h4>
+                        <p>自动获取当前时间，理解时间相关表达，支持定时提醒、日程管理，让对话更具时效性和情境感。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">🌤️</div>
+                    <div class="feature-content">
+                        <h4>天气感知服务</h4>
+                        <p>实时获取天气数据，能根据天气情况调整对话内容和建议，如"今天下雨记得带伞"等贴心提示。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">💬</div>
+                    <div class="feature-content">
+                        <h4>主动交互机制</h4>
+                        <p>突破被动应答模式，AI可根据上下文主动发起话题、关心问候、分享信息，营造更自然的交流氛围。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">📚</div>
+                    <div class="feature-content">
+                        <h4>世界书/设定集</h4>
+                        <p>为角色构建完整的世界观背景，包括地理、历史、文化、规则等设定，确保角色回答的一致性和深度。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">🔔</div>
+                    <div class="feature-content">
+                        <h4>智能闹钟提醒</h4>
+                        <p>支持创建一次性或循环闹钟，到时自动触发提醒通知，可结合自然语言理解设置复杂的时间条件。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">👣</div>
+                    <div class="feature-content">
+                        <h4>足迹追踪系统</h4>
+                        <p>记录用户的活动轨迹和行为模式，用于个性化推荐和习惯分析，提升服务的精准度和用户体验。</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrapper">📝</div>
+                    <div class="feature-content">
+                        <h4>上下文日志</h4>
+                        <p>完整的对话上下文记录和管理，支持分页查询、导出分析，便于调试优化和数据挖掘。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Plugin System -->
+        <div class="slide" data-slide="7">
+            <div class="section-header">
+                <span class="section-number">06 / 扩展性</span>
+                <h2 class="section-title">插件与脚本系统</h2>
+                <p class="section-subtitle">开放式的扩展架构，允许开发者无侵入地添加新功能，保持核心代码的简洁与稳定</p>
+            </div>
+
+            <div class="two-col">
+                <div>
+                    <h3 style="font-size: 26px; font-weight: 700; margin-bottom: 20px; color: var(--primary);">🧩 插件系统 (Plugins)</h3>
+                    <div class="code-preview">
+                        <span class="code-line"><span class="code-keyword">from</span> app.plugins.plugin_base <span class="code-keyword">import</span> BasePlugin</span>
+                        <span class="code-line"></span>
+                        <span class="code-line"><span class="code-keyword">class</span> <span class="code-class">MyPlugin</span>(BasePlugin):</span>
+                        <span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">on_message_received</span>(</span>
+                        <span class="code-line">        self, message: str, user_id: str):</span>
+                        <span class="code-line">        <span class="code-comment"># 自定义消息处理逻辑</span></span>
+                        <span class="code-line">        <span class="code-keyword">return</span> {<span class="code-string">"type"</span>: <span class="code-string">"custom"</span>}</span>
+                    </div>
+                    
+                    <div class="highlight-box" style="margin-top: 25px;">
+                        <h3>内置插件示例</h3>
+                        <ul>
+                            <li><strong>情感分析插件</strong> - 分析用户情绪状态并调整回复语气</li>
+                            <li><strong>欢迎语插件</strong> - 新用户首次交互时的欢迎引导</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 26px; font-weight: 700; margin-bottom: 20px; color: var(--secondary);">📜 脚本系统 (Scripts)</h3>
+                    <div class="code-preview">
+                        <span class="code-line"><span class="code-keyword">from</span> app.scripts.script_base <span class="code-keyword">import</span> BaseScript</span>
+                        <span class="code-line"></span>
+                        <span class="code-line"><span class="code-keyword">class</span> <span class="code-class">MyScript</span>(BaseScript):</span>
+                        <span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">run</span>(self, args=None):</span>
+                        <span class="code-line">        <span class="code-comment"># 自定义脚本执行逻辑</span></span>
+                        <span class="code-line">        <span class="code-keyword">return</span> {<span class="code-string">"success"</span>: <span class="code-keyword">True</span>}</span>
+                    </div>
+                    
+                    <div class="highlight-box" style="margin-top: 25px;">
+                        <h3>扩展优势</h3>
+                        <ul>
+                            <li><strong>热加载</strong> - 无需重启服务即可加载新插件</li>
+                            <li><strong>生命周期钩子</strong> - 消息接收、发送前后的拦截处理</li>
+                            <li><strong>API触发</strong> - 通过接口动态执行脚本任务</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Project Statistics -->
+        <div class="slide" data-slide="8">
+            <div class="section-header">
+                <span class="section-number">07 / 项目规模</span>
+                <h2 class="section-title">开发成果统计</h2>
+                <p class="section-subtitle">用数字见证项目的完整性与专业度</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">业务服务模块</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">18+</div>
+                    <div class="stat-label">API路由接口</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">AI模型支持</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">2000+</div>
+                    <div class="stat-label">有效代码行数</div>
+                </div>
+            </div>
+
+            <div class="cards-grid" style="margin-top: 50px;">
+                <div class="feature-card">
+                    <div class="card-icon">📁</div>
+                    <h3 class="card-title">完善的目录结构</h3>
+                    <p class="card-desc">清晰的分层架构：models/routes/services/plugins/scripts，职责明确，易于维护和团队协作。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">✅</div>
+                    <h3 class="card-title">全面的测试覆盖</h3>
+                    <p class="card-desc">包含单元测试、集成测试、功能测试等多种测试脚本，确保代码质量和系统稳定性。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-icon">📖</div>
+                    <h3 class="card-title">详尽的文档说明</h3>
+                    <p class="card-desc">README、使用说明、API文档、迁移脚本一应俱全，降低学习成本和上手难度。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Code Quality & Innovation -->
+        <div class="slide" data-slide="9">
+            <div class="section-header">
+                <span class="section-number">08 / 创新亮点</span>
+                <h2 class="section-title">技术创新与最佳实践</h2>
+                <p class="section-subtitle">项目中体现的工程思维与技术追求</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">🏗️ 模型注册表模式 (Model Registry Pattern)</div>
+                    <div class="timeline-desc">采用注册表设计模式管理多个AI模型配置，支持动态注册、启用禁用、运行时切换，实现了模型管理的灵活性和可扩展性。</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">🔄 异步非阻塞架构</div>
+                    <div class="timeline-desc">全面采用async/await异步编程范式，从FastAPI路由到服务层再到外部API调用，整个链路都是异步的，极大提升了并发处理能力。</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">🛡️ 数据库迁移机制</div>
+                    <div class="timeline-desc">设计了完善的数据库迁移脚本（migrate_add_character_id.py等），保证数据库schema升级的数据安全性和向后兼容性。</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">🎨 统一的中文编码处理</div>
+                    <div class="timeline-desc">自定义ChineseJSONResponse类，确保所有API返回的JSON数据正确处理中文字符编码，避免乱码问题。</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">🔐 安全的环境变量管理</div>
+                    <div class="timeline-desc">敏感信息（API密钥）全部通过.env文件和环境变量管理，提供.example模板文件，符合12-Factor App原则。</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">📊 系统报告自动生成</div>
+                    <div class="timeline-desc">内置system_report.json生成功能，一键导出系统配置、模型状态、统计数据等信息，便于运维监控和问题排查。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Challenges & Solutions -->
+        <div class="slide" data-slide="10">
+            <div class="section-header">
+                <span class="section-number">09 / 开发历程</span>
+                <h2 class="section-title">遇到的挑战与解决方案</h2>
+                <p class="section-subtitle">真实项目开发中的问题解决过程，体现工程实践能力</p>
+            </div>
+
+            <div class="two-col">
+                <div class="highlight-box">
+                    <h3>❌ 遇到的挑战</h3>
+                    <ul>
+                        <li><strong>多模型API兼容性</strong>：不同厂商的API接口规范差异大，参数格式不统一</li>
+                        <li><strong>长对话上下文管理</strong>：Token限制导致历史消息截断，影响对话连贯性</li>
+                        <li><strong>并发请求处理</strong>：多用户同时访问时的资源竞争和性能瓶颈</li>
+                        <li><strong>数据一致性保障</strong>：异步操作中的数据库事务管理和错误恢复</li>
+                        <li><strong>插件隔离性</strong>：第三方插件的异常不能影响主系统稳定性</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box" style="border-color: rgba(56, 239, 125, 0.25);">
+                    <h3>✅ 解决方案</h3>
+                    <ul>
+                        <li><strong>统一抽象层</strong>：设计LLM Service封装各厂商API差异，对外暴露统一接口</li>
+                        <li><strong>智能摘要策略</strong>：Auto Summary Service自动压缩历史对话，保留关键信息</li>
+                        <li><strong>连接池 + 异步IO</strong>：HTTPX异步客户端 + 连接池复用，提升吞吐量</li>
+                        <li><strong>事务装饰器</strong>：SQLAlchemy事务管理 + 重试机制，保证数据完整性</li>
+                        <li><strong>沙箱执行</strong>：插件运行在独立作用域，异常捕获不影响主流程</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-preview" style="margin-top: 40px;">
+                <span class="code-line"><span class="code-comment"># 示例：统一的LLM服务抽象</span></span>
+                <span class="code-line"><span class="code-keyword">class</span> <span class="code-class">LLMService</span>:</span>
+                <span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">chat_completion</span>(self, messages, model_config):</span>
+                <span class="code-line">        client = self.<span class="code-function">_get_client</span>(model_config.provider)</span>
+                <span class="code-line">        response = <span class="code-keyword">await</span> client.chat.completions.create(</span>
+                <span class="code-line">            model=model_config.model_name,</span>
+                <span class="code-line">            messages=self.<span class="code-function">_format_messages</span>(messages)</span>
+                <span class="code-line">        )</span>
+                <span class="code-line">        <span class="code-keyword">return</span> self.<span class="code-function">_parse_response</span>(response)</span>
+            </div>
+        </div>
+
+        <!-- Slide 11: Closing -->
+        <div class="slide" data-slide="11">
+            <div class="closing-content">
+                <h1 class="thank-you">感谢观看</h1>
+                <p class="closing-message">
+                    本项目展示了现代全栈开发的完整流程<br>
+                    从架构设计到功能实现，从代码质量到工程实践<br>
+                    每一个细节都凝聚着对技术的热爱与追求
+                </p>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 50px;">
+                    <div class="stat-card">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">无限可能</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">🚀</div>
+                        <div class="stat-label">持续迭代</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">💡</div>
+                        <div class="stat-label">创新不止</div>
+                    </div>
+                </div>
+
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div style="font-size: 24px; margin-bottom: 8px;">📂</div>
+                        <div style="font-weight: 600; color: var(--text-primary);">项目仓库</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 5px;">ai_chat_system</div>
+                    </div>
+                    <div class="contact-item">
+                        <div style="font-size: 24px; margin-bottom: 8px;">📚</div>
+                        <div style="font-weight: 600; color: var(--text-primary);">技术文档</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 5px;">README.md</div>
+                    </div>
+                    <div class="contact-item">
+                        <div style="font-size: 24px; margin-bottom: 8px;">🛠️</div>
+                        <div style="font-weight: 600; color: var(--text-primary);">技术栈</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 5px;">Python + FastAPI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 11;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('slideCounter').textContent = `${currentSlide} / ${totalSlides}`;
+            document.getElementById('progressFill').style.width = `${(currentSlide / totalSlides) * 100}%`;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
+        }
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

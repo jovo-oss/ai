@@ -47,6 +47,23 @@ Thumbs.db
 
 # Logs
 *.log
+system_report*.json
 
 # 前端开发工具
 node_modules/
+
+# 测试文件
+test_*.py
+test_*.txt
+test_result*.txt
+
+# 临时文件
+*.bat.tmp
+*.tmp
+
+# go-cqhttp数据
+backend/scripts/go-cqhttp_windows_amd64/
+
+# 数据文件（可选，根据需要调整）
+# backend/data/characters.json
+# backend/data/worldbook.json

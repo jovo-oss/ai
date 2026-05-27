@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.services.worldbook_manager import worldbook_manager, WorldBookEntry
 from app.services.llm_service import llm_service
+from app.services.character_manager import character_manager
 import json
 
 router = APIRouter(prefix="/api/worldbook", tags=["世界书"])
@@ -19,6 +20,8 @@ class WorldBookCreateRequest(BaseModel):
     category: str = "general"
     tags: List[str] = []
     is_active: bool = True
+    collection: str = ""
+    character_id: str = ""  # 绑定的角色ID，空表示全局共享
 
 class WorldBookUpdateRequest(BaseModel):
     title: Optional[str] = None
@@ -26,6 +29,8 @@ class WorldBookUpdateRequest(BaseModel):
     category: Optional[str] = None
     tags: Optional[List[str]] = None
     is_active: Optional[bool] = None
+    collection: Optional[str] = None
+    character_id: Optional[str] = None  # 绑定的角色ID
 
 class WorldBookResponse(BaseModel):
     success: bool
@@ -33,9 +38,9 @@ class WorldBookResponse(BaseModel):
     entry: Optional[dict] = None
 
 @router.get("/list", response_model=WorldBookListResponse)
-async def list_entries(category: Optional[str] = None, active_only: bool = False):
+async def list_entries(category: Optional[str] = None, active_only: bool = False, character_id: Optional[str] = None):
     """获取世界书条目列表"""
-    entries = worldbook_manager.list_entries(category=category, active_only=active_only)
+    entries = worldbook_manager.list_entries(category=category, active_only=active_only, character_id=character_id)
     categories = worldbook_manager.get_categories()
     
     return WorldBookListResponse(
@@ -48,6 +53,8 @@ async def list_entries(category: Optional[str] = None, active_only: bool = False
                 "category": e.category,
                 "tags": e.tags,
                 "is_active": e.is_active,
+                "collection": e.collection,
+                "character_id": e.character_id,
                 "created_at": e.created_at,
                 "updated_at": e.updated_at
             }
@@ -69,7 +76,8 @@ async def search_entries(keyword: str):
                 "content": e.content,
                 "category": e.category,
                 "tags": e.tags,
-                "is_active": e.is_active
+                "is_active": e.is_active,
+                "character_id": e.character_id
             }
             for e in entries
         ],
@@ -77,9 +85,9 @@ async def search_entries(keyword: str):
     }
 
 @router.get("/context")
-async def get_context():
+async def get_context(character_id: Optional[str] = None):
     """获取激活的世界书上下文"""
-    context = worldbook_manager.get_active_context()
+    context = worldbook_manager.get_active_context(character_id=character_id)
     return {
         "success": True,
         "context": context
@@ -99,6 +107,8 @@ async def get_entry(entry_id: str):
                 "category": entry.category,
                 "tags": entry.tags,
                 "is_active": entry.is_active,
+                "collection": entry.collection,
+                "character_id": entry.character_id,
                 "created_at": entry.created_at,
                 "updated_at": entry.updated_at
             }
@@ -122,7 +132,9 @@ async def create_entry(request: WorldBookCreateRequest):
         content=request.content,
         category=request.category,
         tags=request.tags,
-        is_active=request.is_active
+        is_active=request.is_active,
+        collection=request.collection,
+        character_id=request.character_id
     )
     
     entry = worldbook_manager.add_entry(entry)
@@ -132,7 +144,8 @@ async def create_entry(request: WorldBookCreateRequest):
         entry={
             "id": entry.id,
             "title": entry.title,
-            "category": entry.category
+            "category": entry.category,
+            "character_id": entry.character_id
         }
     )
 
@@ -241,6 +254,105 @@ async def ai_generate_worldbook(request: WorldBookAIRequest):
 class WorldBookModifyRequest(BaseModel):
     current_entry: dict
     modify_prompt: str
+
+class WorldBookGenerateFromCharacterRequest(BaseModel):
+    character_id: str
+
+@router.post("/generate-from-character")
+async def generate_worldbook_from_character(request: WorldBookGenerateFromCharacterRequest):
+    """根据角色预设自动生成世界书条目"""
+    try:
+        character = character_manager.get_character(request.character_id)
+        if not character:
+            return {
+                "success": False,
+                "message": "角色不存在"
+            }
+        
+        prompt = f"""你是一个专业的世界构建师。请根据以下角色预设信息，生成一套完整的世界书条目。
+
+角色信息：
+- 名称：{character.name}
+- 描述：{character.description}
+- 性格：{character.personality}
+- 系统提示词：{character.system_prompt}
+- 标签：{', '.join(character.tags) if character.tags else '无'}
+
+请根据这个角色，生成3-5个世界书条目。这些条目应该包括：
+1. 角色背景故事（character分类）
+2. 角色所在的世界/地点设定（location分类）
+3. 角色相关的特殊物品或能力（item分类）
+4. 世界规则或设定（rule分类）
+5. 其他相关的背景知识（lore分类）
+
+你需要输出以下JSON格式：
+{{
+    "entries": [
+        {{
+            "id": "条目ID，用英文和下划线，简短好记",
+            "title": "条目标题",
+            "category": "分类（只能是以下之一：general, character, location, item, lore, rule）",
+            "content": "详细的世界背景描述（内容丰富，至少150字）",
+            "tags": ["标签1", "标签2", "标签3"]
+        }},
+        ...
+    ]
+}}
+
+注意：
+1. 只输出JSON，不要有其他内容
+2. 每个条目的id必须唯一
+3. content要详细丰富，让AI能充分了解这个世界背景
+4. category必须从给定的分类中选择
+5. 生成的条目应该与角色高度相关，构建一个完整的世界观"""
+
+        response = await llm_service.chat_completion(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.8,
+            max_tokens=3000
+        )
+        
+        # 提取JSON
+        content = response.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+        
+        worldbook_data = json.loads(content)
+        
+        # 自动保存到世界书
+        saved_entries = []
+        collection_id = f"char_{request.character_id}"
+        for entry_data in worldbook_data.get("entries", []):
+            entry_id = entry_data.get("id")
+            if entry_id and not worldbook_manager.get_entry(entry_id):
+                entry = WorldBookEntry(
+                    id=entry_id,
+                    title=entry_data.get("title", ""),
+                    content=entry_data.get("content", ""),
+                    category=entry_data.get("category", "general"),
+                    tags=entry_data.get("tags", []),
+                    is_active=True,
+                    collection=collection_id,
+                    character_id=request.character_id  # 绑定到角色
+                )
+                worldbook_manager.add_entry(entry)
+                saved_entries.append(entry_data)
+        
+        return {
+            "success": True,
+            "entries": saved_entries,
+            "count": len(saved_entries)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"AI生成失败: {str(e)}"
+        }
 
 @router.post("/ai-modify")
 async def ai_modify_worldbook(request: WorldBookModifyRequest):

@@ -1,0 +1,1769 @@
+{
+  "generated_at": "2026-05-26T19:16:30.360835",
+  "system_info": {
+    "name": "AI聊天系统",
+    "version": "3.5.0",
+    "last_scan": "2026-05-26T19:16:30.355390",
+    "total_modules": 21,
+    "active_modules": 21,
+    "error_modules": 0
+  },
+  "health_check": {
+    "timestamp": "2026-05-26T19:16:30.360841",
+    "overall_status": "healthy",
+    "scores": {
+      "core": 10000.0,
+      "ai": 10000.0,
+      "ui": 10000.0,
+      "data": 10000.0,
+      "plugin": 10000.0
+    },
+    "modules": {
+      "chat_core": {
+        "name": "聊天核心引擎",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "character_system": {
+        "name": "角色预设系统",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "api_config": {
+        "name": "API配置管理",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "llm_service": {
+        "name": "LLM大模型服务",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "tts_service": {
+        "name": "语音合成TTS",
+        "score": 100,
+        "status": "active",
+        "issues_count": 1
+      },
+      "smart_parse": {
+        "name": "智能实时解析",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "auto_extract": {
+        "name": "智能主动记录",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "frontend_ui": {
+        "name": "前端界面",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "context_panel": {
+        "name": "上下文显示区块",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "database": {
+        "name": "数据库系统",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "memory_system": {
+        "name": "角色记忆系统",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "footprint_system": {
+        "name": "足迹/知识图谱系统",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "worldbook_system": {
+        "name": "世界书系统",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "context_manager": {
+        "name": "智能上下文管理器",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "auto_summary": {
+        "name": "自动摘要服务",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "plugin_system": {
+        "name": "插件系统",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "agent_tools": {
+        "name": "Agent工具集",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "authors_note": {
+        "name": "Author's Note模块",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "time_weather": {
+        "name": "时间天气感知",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "model_plaza": {
+        "name": "模型广场",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      },
+      "context_log": {
+        "name": "上下文日志",
+        "score": 100,
+        "status": "active",
+        "issues_count": 0
+      }
+    },
+    "issues": [],
+    "recommendations": [],
+    "overall_score": 100.0
+  },
+  "dependency_analysis": {
+    "graph": {
+      "nodes": [
+        {
+          "id": "chat_core",
+          "name": "聊天核心引擎",
+          "category": "core",
+          "status": "active",
+          "priority": 5
+        },
+        {
+          "id": "character_system",
+          "name": "角色预设系统",
+          "category": "core",
+          "status": "active",
+          "priority": 5
+        },
+        {
+          "id": "api_config",
+          "name": "API配置管理",
+          "category": "core",
+          "status": "active",
+          "priority": 5
+        },
+        {
+          "id": "llm_service",
+          "name": "LLM大模型服务",
+          "category": "ai",
+          "status": "active",
+          "priority": 5
+        },
+        {
+          "id": "tts_service",
+          "name": "语音合成TTS",
+          "category": "ai",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "smart_parse",
+          "name": "智能实时解析",
+          "category": "ai",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "auto_extract",
+          "name": "智能主动记录",
+          "category": "ai",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "frontend_ui",
+          "name": "前端界面",
+          "category": "ui",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "context_panel",
+          "name": "上下文显示区块",
+          "category": "ui",
+          "status": "active",
+          "priority": 3
+        },
+        {
+          "id": "database",
+          "name": "数据库系统",
+          "category": "data",
+          "status": "active",
+          "priority": 5
+        },
+        {
+          "id": "memory_system",
+          "name": "角色记忆系统",
+          "category": "data",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "footprint_system",
+          "name": "足迹/知识图谱系统",
+          "category": "data",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "worldbook_system",
+          "name": "世界书系统",
+          "category": "data",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "context_manager",
+          "name": "智能上下文管理器",
+          "category": "data",
+          "status": "active",
+          "priority": 4
+        },
+        {
+          "id": "auto_summary",
+          "name": "自动摘要服务",
+          "category": "data",
+          "status": "active",
+          "priority": 3
+        },
+        {
+          "id": "plugin_system",
+          "name": "插件系统",
+          "category": "plugin",
+          "status": "active",
+          "priority": 3
+        },
+        {
+          "id": "agent_tools",
+          "name": "Agent工具集",
+          "category": "plugin",
+          "status": "active",
+          "priority": 3
+        },
+        {
+          "id": "authors_note",
+          "name": "Author's Note模块",
+          "category": "plugin",
+          "status": "active",
+          "priority": 2
+        },
+        {
+          "id": "time_weather",
+          "name": "时间天气感知",
+          "category": "plugin",
+          "status": "active",
+          "priority": 2
+        },
+        {
+          "id": "model_plaza",
+          "name": "模型广场",
+          "category": "plugin",
+          "status": "active",
+          "priority": 2
+        },
+        {
+          "id": "context_log",
+          "name": "上下文日志",
+          "category": "data",
+          "status": "active",
+          "priority": 2
+        }
+      ],
+      "edges": [
+        {
+          "source": "llm_service",
+          "target": "api_config",
+          "type": "depends_on"
+        },
+        {
+          "source": "tts_service",
+          "target": "api_config",
+          "type": "depends_on"
+        },
+        {
+          "source": "tts_service",
+          "target": "llm_service",
+          "type": "depends_on"
+        },
+        {
+          "source": "smart_parse",
+          "target": "llm_service",
+          "type": "depends_on"
+        },
+        {
+          "source": "smart_parse",
+          "target": "footprint_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "auto_extract",
+          "target": "llm_service",
+          "type": "depends_on"
+        },
+        {
+          "source": "auto_extract",
+          "target": "smart_parse",
+          "type": "depends_on"
+        },
+        {
+          "source": "auto_extract",
+          "target": "footprint_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "context_panel",
+          "target": "frontend_ui",
+          "type": "depends_on"
+        },
+        {
+          "source": "memory_system",
+          "target": "database",
+          "type": "depends_on"
+        },
+        {
+          "source": "memory_system",
+          "target": "character_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "footprint_system",
+          "target": "database",
+          "type": "depends_on"
+        },
+        {
+          "source": "footprint_system",
+          "target": "character_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "footprint_system",
+          "target": "smart_parse",
+          "type": "depends_on"
+        },
+        {
+          "source": "footprint_system",
+          "target": "auto_extract",
+          "type": "depends_on"
+        },
+        {
+          "source": "worldbook_system",
+          "target": "database",
+          "type": "depends_on"
+        },
+        {
+          "source": "worldbook_system",
+          "target": "character_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "context_manager",
+          "target": "memory_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "context_manager",
+          "target": "worldbook_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "context_manager",
+          "target": "footprint_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "auto_summary",
+          "target": "llm_service",
+          "type": "depends_on"
+        },
+        {
+          "source": "auto_summary",
+          "target": "database",
+          "type": "depends_on"
+        },
+        {
+          "source": "agent_tools",
+          "target": "llm_service",
+          "type": "depends_on"
+        },
+        {
+          "source": "agent_tools",
+          "target": "plugin_system",
+          "type": "depends_on"
+        },
+        {
+          "source": "authors_note",
+          "target": "chat_core",
+          "type": "depends_on"
+        },
+        {
+          "source": "model_plaza",
+          "target": "api_config",
+          "type": "depends_on"
+        },
+        {
+          "source": "context_log",
+          "target": "database",
+          "type": "depends_on"
+        },
+        {
+          "source": "context_log",
+          "target": "footprint_system",
+          "type": "depends_on"
+        }
+      ]
+    },
+    "issues": []
+  },
+  "module_inventory": {
+    "by_category": {
+      "ui": {
+        "count": 2,
+        "modules": [
+          {
+            "id": "frontend_ui",
+            "name": "前端界面",
+            "version": "3.4.0",
+            "description": "React + Tailwind CSS构建的现代化界面",
+            "category": "ui",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [],
+            "dependents": [],
+            "file_path": "frontend/",
+            "api_endpoints": [],
+            "config_options": {
+              "theme": "dark",
+              "responsive": true,
+              "mobile_support": true
+            },
+            "last_updated": "2026-05-25",
+            "performance_metrics": {
+              "load_time": "1.5s",
+              "bundle_size": "~500KB",
+              "lighthouse_score": 92
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.4.0",
+                "date": "2026-05-25",
+                "changes": [
+                  "素黑主题优化"
+                ]
+              }
+            ],
+            "tags": [
+              "UI",
+              "React",
+              "响应式"
+            ]
+          },
+          {
+            "id": "context_panel",
+            "name": "上下文显示区块",
+            "version": "3.2.0",
+            "description": "左侧实时显示角色信息、世界书、记忆、足迹",
+            "category": "ui",
+            "status": "active",
+            "priority": 3,
+            "dependencies": [
+              "frontend_ui"
+            ],
+            "dependents": [],
+            "file_path": "frontend/src/components/ContextPanel.jsx",
+            "api_endpoints": [
+              "/api/context",
+              "/api/relevant-memories"
+            ],
+            "config_options": {
+              "auto_refresh": true,
+              "refresh_interval": 2000,
+              "collapse_sections": true
+            },
+            "last_updated": "2026-05-22",
+            "performance_metrics": {
+              "render_time": "50ms",
+              "update_frequency": "实时"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.2.0",
+                "date": "2026-05-22",
+                "changes": [
+                  "添加搜索和折叠功能"
+                ]
+              }
+            ],
+            "tags": [
+              "UI",
+              "侧边栏",
+              "上下文"
+            ]
+          }
+        ]
+      },
+      "data": {
+        "count": 7,
+        "modules": [
+          {
+            "id": "database",
+            "name": "数据库系统",
+            "version": "3.3.0",
+            "description": "SQLite数据库存储与ORM映射",
+            "category": "data",
+            "status": "active",
+            "priority": 5,
+            "dependencies": [],
+            "dependents": [
+              "character_system",
+              "memory_system",
+              "footprint_system",
+              "worldbook_system"
+            ],
+            "file_path": "app/models/database.py",
+            "api_endpoints": [],
+            "config_options": {
+              "db_type": "SQLite",
+              "pool_size": 5,
+              "backup_enabled": true
+            },
+            "last_updated": "2026-05-18",
+            "performance_metrics": {
+              "query_avg_time": "15ms",
+              "db_size": "~50MB",
+              "connection_pool": "活跃"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.3.0",
+                "date": "2026-05-18",
+                "changes": [
+                  "优化索引性能"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "数据库",
+              "存储"
+            ]
+          },
+          {
+            "id": "memory_system",
+            "name": "角色记忆系统",
+            "version": "3.2.0",
+            "description": "管理角色的长期记忆和偏好",
+            "category": "data",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "database",
+              "character_system"
+            ],
+            "dependents": [
+              "context_manager"
+            ],
+            "file_path": "app/services/memory_event_service.py",
+            "api_endpoints": [
+              "/api/memories/*",
+              "/api/relevant-memories"
+            ],
+            "config_options": {
+              "max_memories_per_char": 100,
+              "importance_decay": true,
+              "auto_cleanup": true
+            },
+            "last_updated": "2026-05-20",
+            "performance_metrics": {
+              "total_memories": "~500",
+              "avg_query_time": "30ms"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.2.0",
+                "date": "2026-05-20",
+                "changes": [
+                  "智能衰减机制"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "记忆",
+              "长期存储"
+            ]
+          },
+          {
+            "id": "footprint_system",
+            "name": "足迹/知识图谱系统",
+            "version": "3.5.0",
+            "description": "记录冒险历程并构建可视化知识图谱",
+            "category": "data",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "database",
+              "character_system",
+              "smart_parse",
+              "auto_extract"
+            ],
+            "dependents": [],
+            "file_path": "app/routes/memory_events.py, app/services/memory_event_service.py",
+            "api_endpoints": [
+              "/api/memory-events/smart-parse",
+              "/api/memory-events/list",
+              "/api/memory-events/tree",
+              "/api/memory-events/add-node",
+              "/api/memory-events/delete"
+            ],
+            "config_options": {
+              "graph_type": "force-directed",
+              "visualization_lib": "D3.js",
+              "max_nodes": 200,
+              "relation_types": 6
+            },
+            "last_updated": "2026-05-26",
+            "performance_metrics": {
+              "total_entities": "~1200",
+              "graph_render_time": "200ms",
+              "auto_records/day": "~50"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.5.0",
+                "date": "2026-05-26",
+                "changes": [
+                  "主动记录系统集成"
+                ]
+              },
+              {
+                "version": "3.4.0",
+                "date": "2026-05-25",
+                "changes": [
+                  "知识图谱视图"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "知识图谱",
+              "可视化",
+              "足迹"
+            ]
+          },
+          {
+            "id": "worldbook_system",
+            "name": "世界书系统",
+            "version": "3.3.0",
+            "description": "管理背景设定、世界观、人物关系等知识库",
+            "category": "data",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "database",
+              "character_system"
+            ],
+            "dependents": [
+              "context_manager"
+            ],
+            "file_path": "app/services/worldbook_manager.py",
+            "api_endpoints": [
+              "/api/worldbooks/*"
+            ],
+            "config_options": {
+              "smart_activation": true,
+              "collections_enabled": true,
+              "ai_generation": true
+            },
+            "last_updated": "2026-05-22",
+            "performance_metrics": {
+              "total_entries": "~300",
+              "activation_accuracy": "88%"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.3.0",
+                "date": "2026-05-22",
+                "changes": [
+                  "智能激活系统升级"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "世界书",
+              "知识库",
+              "设定"
+            ]
+          },
+          {
+            "id": "context_manager",
+            "name": "智能上下文管理器",
+            "version": "3.2.0",
+            "description": "自动匹配并注入相关的世界书、记忆和足迹信息",
+            "category": "data",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "memory_system",
+              "worldbook_system",
+              "footprint_system"
+            ],
+            "dependents": [
+              "chat_core"
+            ],
+            "file_path": "app/services/context_manager.py",
+            "api_endpoints": [],
+            "config_options": {
+              "token_budget": 4000,
+              "keyword_matching": true,
+              "priority_weights": {
+                "character": 0.2,
+                "chat": 0.4,
+                "memory": 0.25,
+                "worldbook": 0.15
+              }
+            },
+            "last_updated": "2026-05-23",
+            "performance_metrics": {
+              "token_savings": "30-40%",
+              "matching_accuracy": "85%"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.2.0",
+                "date": "2026-05-23",
+                "changes": [
+                  "智能权重分配"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "上下文",
+              "智能匹配",
+              "优化"
+            ]
+          },
+          {
+            "id": "auto_summary",
+            "name": "自动摘要服务",
+            "version": "3.1.0",
+            "description": "智能压缩长对话，解决Token溢出问题",
+            "category": "data",
+            "status": "active",
+            "priority": 3,
+            "dependencies": [
+              "llm_service",
+              "database"
+            ],
+            "dependents": [
+              "chat_core"
+            ],
+            "file_path": "app/services/auto_summary_service.py",
+            "api_endpoints": [],
+            "config_options": {
+              "trigger_threshold": 0.8,
+              "keep_recent_messages": 20,
+              "summary_language": "auto"
+            },
+            "last_updated": "2026-05-19",
+            "performance_metrics": {
+              "compression_ratio": "70%",
+              "summary_quality": "high"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.1.0",
+                "date": "2026-05-19",
+                "changes": [
+                  "初始版本发布"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "摘要",
+              "压缩",
+              "优化"
+            ]
+          },
+          {
+            "id": "context_log",
+            "name": "上下文日志",
+            "version": "3.1.0",
+            "description": "记录AI自动提取足迹的完整过程日志",
+            "category": "data",
+            "status": "active",
+            "priority": 2,
+            "dependencies": [
+              "database",
+              "footprint_system"
+            ],
+            "dependents": [],
+            "file_path": "app/services/context_log_service.py",
+            "api_endpoints": [
+              "/api/context-logs/*"
+            ],
+            "config_options": {
+              "max_logs": 1000,
+              "retention_days": 30
+            },
+            "last_updated": "2026-05-21",
+            "performance_metrics": {
+              "total_logs": "~2500",
+              "log_size": "~5MB"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.1.0",
+                "date": "2026-05-21",
+                "changes": [
+                  "详细日志格式"
+                ]
+              }
+            ],
+            "tags": [
+              "数据",
+              "日志",
+              "监控",
+              "调试"
+            ]
+          }
+        ]
+      },
+      "plugin": {
+        "count": 5,
+        "modules": [
+          {
+            "id": "plugin_system",
+            "name": "插件系统",
+            "version": "3.1.0",
+            "description": "轻量级插件框架，支持功能扩展",
+            "category": "plugin",
+            "status": "active",
+            "priority": 3,
+            "dependencies": [],
+            "dependents": [
+              "agent_tools"
+            ],
+            "file_path": "app/plugins/plugin_base.py",
+            "api_endpoints": [],
+            "config_options": {
+              "max_plugins": 20,
+              "hot_reload": false
+            },
+            "last_updated": "2026-05-12",
+            "performance_metrics": {
+              "loaded_plugins": 0,
+              "hook_points": 5
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.1.0",
+                "date": "2026-05-12",
+                "changes": [
+                  "基础架构完成"
+                ]
+              }
+            ],
+            "tags": [
+              "插件",
+              "扩展",
+              "框架"
+            ]
+          },
+          {
+            "id": "agent_tools",
+            "name": "Agent工具集",
+            "version": "3.4.0",
+            "description": "AI辅助工具集合（分析师、生成器等）",
+            "category": "plugin",
+            "status": "active",
+            "priority": 3,
+            "dependencies": [
+              "llm_service",
+              "plugin_system"
+            ],
+            "dependents": [],
+            "file_path": "app/routes/agent_tools.py",
+            "api_endpoints": [
+              "/api/agent-tools/*"
+            ],
+            "config_options": {
+              "available_tools": [
+                "role_analyzer",
+                "worldbook_generator",
+                "chat_summarizer",
+                "memory_extractor",
+                "role_optimizer",
+                "affinity_designer",
+                "relationship_analyzer",
+                "branch_generator",
+                "scene_generator",
+                "style_analyzer"
+              ]
+            },
+            "last_updated": "2026-05-24",
+            "performance_metrics": {
+              "tool_count": 10,
+              "avg_execution_time": "5s"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.4.0",
+                "date": "2026-05-24",
+                "changes": [
+                  "新增场景生成器和风格分析"
+                ]
+              }
+            ],
+            "tags": [
+              "插件",
+              "Agent",
+              "AI工具",
+              "分析"
+            ]
+          },
+          {
+            "id": "authors_note",
+            "name": "Author's Note模块",
+            "version": "3.0.0",
+            "description": "通过注释引导AI回复方向和风格",
+            "category": "plugin",
+            "status": "active",
+            "priority": 2,
+            "dependencies": [
+              "chat_core"
+            ],
+            "dependents": [],
+            "file_path": "app/routes/authors_note.py, app/services/author_note_service.py",
+            "api_endpoints": [
+              "/api/authors-note/*"
+            ],
+            "config_options": {
+              "injection_positions": [
+                "beginning",
+                "after_recent",
+                "custom"
+              ],
+              "priority_levels": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "last_updated": "2026-05-17",
+            "performance_metrics": {
+              "usage_rate": "15%"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.0.0",
+                "date": "2026-05-17",
+                "changes": [
+                  "首次发布"
+                ]
+              }
+            ],
+            "tags": [
+              "插件",
+              "引导",
+              "注释",
+              "高级"
+            ]
+          },
+          {
+            "id": "time_weather",
+            "name": "时间天气感知",
+            "version": "3.1.0",
+            "description": "获取真实时间和天气信息注入对话",
+            "category": "plugin",
+            "status": "active",
+            "priority": 2,
+            "dependencies": [],
+            "dependents": [
+              "chat_core"
+            ],
+            "file_path": "app/services/time_awareness_service.py, app/services/weather_awareness_service.py",
+            "api_endpoints": [],
+            "config_options": {
+              "time_format": "friendly",
+              "weather_api": "OpenWeatherMap"
+            },
+            "last_updated": "2026-05-14",
+            "performance_metrics": {
+              "update_interval": "每小时",
+              "accuracy": "高"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.1.0",
+                "date": "2026-05-14",
+                "changes": [
+                  "友好格式输出"
+                ]
+              }
+            ],
+            "tags": [
+              "插件",
+              "环境",
+              "感知",
+              "沉浸"
+            ]
+          },
+          {
+            "id": "model_plaza",
+            "name": "模型广场",
+            "version": "3.2.0",
+            "description": "发现和管理可用AI模型的展示界面",
+            "category": "plugin",
+            "status": "active",
+            "priority": 2,
+            "dependencies": [
+              "api_config"
+            ],
+            "dependents": [],
+            "file_path": "app/routes/model_plaza.py",
+            "api_endpoints": [
+              "/api/model-plaza/*"
+            ],
+            "config_options": {
+              "auto_fetch": true,
+              "cache_duration": 3600
+            },
+            "last_updated": "2026-05-21",
+            "performance_metrics": {
+              "cached_models": 150,
+              "fetch_time": "3s"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.2.0",
+                "date": "2026-05-21",
+                "changes": [
+                  "搜索筛选优化"
+                ]
+              }
+            ],
+            "tags": [
+              "插件",
+              "模型",
+              "发现",
+              "UI"
+            ]
+          }
+        ]
+      },
+      "ai": {
+        "count": 4,
+        "modules": [
+          {
+            "id": "llm_service",
+            "name": "LLM大模型服务",
+            "version": "3.4.0",
+            "description": "连接和调用多种AI大语言模型",
+            "category": "ai",
+            "status": "active",
+            "priority": 5,
+            "dependencies": [
+              "api_config"
+            ],
+            "dependents": [
+              "chat_core",
+              "smart_parse",
+              "auto_extract",
+              "agent_tools"
+            ],
+            "file_path": "app/services/llm_service.py",
+            "api_endpoints": [],
+            "config_options": {
+              "default_model": {
+                "type": "string",
+                "default": "deepseek-chat"
+              },
+              "timeout": {
+                "type": "int",
+                "default": 30,
+                "unit": "秒"
+              },
+              "retry_count": {
+                "type": "int",
+                "default": 3
+              }
+            },
+            "last_updated": "2026-05-26",
+            "performance_metrics": {
+              "avg_latency": "800ms",
+              "success_rate": "98.5%",
+              "token_usage": "~50K/天"
+            },
+            "known_issues": [
+              {
+                "id": "LLM-001",
+                "title": "JSON格式不稳定",
+                "severity": "high",
+                "status": "resolved",
+                "solution": "已实现多策略降级解析"
+              }
+            ],
+            "upgrade_history": [
+              {
+                "version": "3.4.0",
+                "date": "2026-05-26",
+                "changes": [
+                  "增强容错机制"
+                ]
+              },
+              {
+                "version": "3.3.0",
+                "date": "2026-05-20",
+                "changes": [
+                  "支持视觉模型"
+                ]
+              }
+            ],
+            "tags": [
+              "AI",
+              "核心",
+              "大模型"
+            ]
+          },
+          {
+            "id": "tts_service",
+            "name": "语音合成TTS",
+            "version": "3.1.0",
+            "description": "文字转语音合成与播放",
+            "category": "ai",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "api_config",
+              "llm_service"
+            ],
+            "dependents": [
+              "chat_core"
+            ],
+            "file_path": "app/services/tts_service.py",
+            "api_endpoints": [],
+            "config_options": {
+              "voice_options": [
+                "中文女声",
+                "中文男声",
+                "英文女声"
+              ],
+              "speed": {
+                "type": "float",
+                "default": 1.0,
+                "range": [
+                  0.5,
+                  2.0
+                ]
+              }
+            },
+            "last_updated": "2026-05-10",
+            "performance_metrics": {
+              "avg_generation_time": "2.5s",
+              "audio_quality": "high"
+            },
+            "known_issues": [
+              {
+                "id": "TTS-001",
+                "title": "网络超时偶尔失败",
+                "severity": "low",
+                "status": "known",
+                "solution": "已实现容错，不影响聊天"
+              }
+            ],
+            "upgrade_history": [
+              {
+                "version": "3.1.0",
+                "date": "2026-05-10",
+                "changes": [
+                  "增加容错处理"
+                ]
+              }
+            ],
+            "tags": [
+              "AI",
+              "语音",
+              "TTS"
+            ]
+          },
+          {
+            "id": "smart_parse",
+            "name": "智能实时解析",
+            "version": "3.5.0",
+            "description": "从聊天上下文提取实体并构建知识图谱",
+            "category": "ai",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "llm_service",
+              "footprint_system"
+            ],
+            "dependents": [],
+            "file_path": "app/routes/memory_events.py",
+            "api_endpoints": [
+              "/api/memory-events/smart-parse",
+              "/api/memory-events/ai-extract-footprints"
+            ],
+            "config_options": {
+              "parse_modes": [
+                "auto",
+                "full",
+                "manual"
+              ],
+              "dynamic_prompt": true,
+              "json_repair": true
+            },
+            "last_updated": "2026-05-26",
+            "performance_metrics": {
+              "parse_success_rate": "99%+ (三级降级)",
+              "avg_parse_time": "8s",
+              "entity_accuracy": "92%"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.5.0",
+                "date": "2026-05-26",
+                "changes": [
+                  "多策略降级系统"
+                ]
+              },
+              {
+                "version": "3.4.0",
+                "date": "2026-05-25",
+                "changes": [
+                  "层级化知识图谱"
+                ]
+              }
+            ],
+            "tags": [
+              "AI",
+              "解析",
+              "知识图谱",
+              "NLP"
+            ]
+          },
+          {
+            "id": "auto_extract",
+            "name": "智能主动记录",
+            "version": "3.5.0",
+            "description": "聊天过程中自动检测并记录重要信息到足迹系统",
+            "category": "ai",
+            "status": "active",
+            "priority": 4,
+            "dependencies": [
+              "llm_service",
+              "smart_parse",
+              "footprint_system"
+            ],
+            "dependents": [],
+            "file_path": "app/routes/chat.py (auto_extract_footprints_if_enabled)",
+            "api_endpoints": [],
+            "config_options": {
+              "auto_enabled": true,
+              "trigger_interval": 5,
+              "keyword_detection": true,
+              "min_keywords": 2
+            },
+            "last_updated": "2026-05-26",
+            "performance_metrics": {
+              "trigger_accuracy": "95%",
+              "false_positive_rate": "<5%",
+              "background_processing": true
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.5.0",
+                "date": "2026-05-26",
+                "changes": [
+                  "全新双模式触发系统"
+                ]
+              }
+            ],
+            "tags": [
+              "AI",
+              "自动化",
+              "后台",
+              "创新"
+            ]
+          }
+        ]
+      },
+      "core": {
+        "count": 3,
+        "modules": [
+          {
+            "id": "chat_core",
+            "name": "聊天核心引擎",
+            "version": "3.5.0",
+            "description": "处理消息收发、上下文管理的核心引擎",
+            "category": "core",
+            "status": "active",
+            "priority": 5,
+            "dependencies": [],
+            "dependents": [
+              "tts_service",
+              "auto_summary",
+              "footprint_auto"
+            ],
+            "file_path": "app/routes/chat.py",
+            "api_endpoints": [
+              "/api/chat/send",
+              "/api/chat/history",
+              "/api/chat/delete-messages-after"
+            ],
+            "config_options": {
+              "max_tokens": {
+                "type": "int",
+                "default": 4000,
+                "range": [
+                  500,
+                  8000
+                ]
+              },
+              "temperature": {
+                "type": "float",
+                "default": 0.7,
+                "range": [
+                  0.0,
+                  2.0
+                ]
+              },
+              "top_p": {
+                "type": "float",
+                "default": 0.9,
+                "range": [
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "last_updated": "2026-05-26",
+            "performance_metrics": {
+              "avg_response_time": "1.2s",
+              "success_rate": "99.5%",
+              "daily_requests": "~1000"
+            },
+            "known_issues": [
+              {
+                "id": "CHAT-001",
+                "title": "长对话Token溢出",
+                "severity": "medium",
+                "status": "mitigated",
+                "solution": "自动摘要服务已缓解"
+              }
+            ],
+            "upgrade_history": [
+              {
+                "version": "3.5.0",
+                "date": "2026-05-26",
+                "changes": [
+                  "集成主动记录系统"
+                ]
+              },
+              {
+                "version": "3.4.0",
+                "date": "2026-05-25",
+                "changes": [
+                  "优化上下文管理"
+                ]
+              }
+            ],
+            "tags": [
+              "核心",
+              "消息处理",
+              "API"
+            ]
+          },
+          {
+            "id": "character_system",
+            "name": "角色预设系统",
+            "version": "3.3.0",
+            "description": "创建、管理和切换AI角色",
+            "category": "core",
+            "status": "active",
+            "priority": 5,
+            "dependencies": [],
+            "dependents": [
+              "worldbook_system",
+              "memory_system",
+              "footprint_system"
+            ],
+            "file_path": "app/services/character_manager.py",
+            "api_endpoints": [
+              "/api/characters/create",
+              "/api/characters/list",
+              "/api/characters/delete"
+            ],
+            "config_options": {
+              "max_characters": {
+                "type": "int",
+                "default": 50,
+                "description": "最大角色数量"
+              }
+            },
+            "last_updated": "2026-05-20",
+            "performance_metrics": {
+              "avg_load_time": "0.3s",
+              "storage_usage": "~2MB"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.3.0",
+                "date": "2026-05-20",
+                "changes": [
+                  "支持对话分析创建角色"
+                ]
+              }
+            ],
+            "tags": [
+              "核心",
+              "角色管理",
+              "预设"
+            ]
+          },
+          {
+            "id": "api_config",
+            "name": "API配置管理",
+            "version": "3.2.0",
+            "description": "多供应商API密钥管理与切换",
+            "category": "core",
+            "status": "active",
+            "priority": 5,
+            "dependencies": [],
+            "dependents": [
+              "llm_service",
+              "tts_service"
+            ],
+            "file_path": "app/services/api_config_service.py",
+            "api_endpoints": [
+              "/api/config/save",
+              "/api/config/list",
+              "/api/config/test"
+            ],
+            "config_options": {
+              "supported_providers": [
+                "DeepSeek",
+                "OpenAI",
+                "阿里云百炼",
+                "智谱AI",
+                "百度千帆"
+              ]
+            },
+            "last_updated": "2026-05-15",
+            "performance_metrics": {
+              "config_load_time": "0.1s",
+              "encryption": "AES-256"
+            },
+            "known_issues": [],
+            "upgrade_history": [
+              {
+                "version": "3.2.0",
+                "date": "2026-05-15",
+                "changes": [
+                  "支持多用户隔离"
+                ]
+              }
+            ],
+            "tags": [
+              "核心",
+              "安全",
+              "配置"
+            ]
+          }
+        ]
+      }
+    },
+    "by_status": {
+      "active": {
+        "count": 21,
+        "modules": [
+          "chat_core",
+          "character_system",
+          "api_config",
+          "llm_service",
+          "tts_service",
+          "smart_parse",
+          "auto_extract",
+          "frontend_ui",
+          "context_panel",
+          "database",
+          "memory_system",
+          "footprint_system",
+          "worldbook_system",
+          "context_manager",
+          "auto_summary",
+          "plugin_system",
+          "agent_tools",
+          "authors_note",
+          "time_weather",
+          "model_plaza",
+          "context_log"
+        ]
+      },
+      "inactive": {
+        "count": 0,
+        "modules": []
+      },
+      "error": {
+        "count": 0,
+        "modules": []
+      },
+      "deprecated": {
+        "count": 0,
+        "modules": []
+      },
+      "developing": {
+        "count": 0,
+        "modules": []
+      },
+      "unknown": {
+        "count": 0,
+        "modules": []
+      }
+    },
+    "by_priority": {
+      "5": {
+        "count": 5,
+        "modules": [
+          "chat_core",
+          "character_system",
+          "api_config",
+          "llm_service",
+          "database"
+        ]
+      },
+      "4": {
+        "count": 8,
+        "modules": [
+          "tts_service",
+          "smart_parse",
+          "auto_extract",
+          "frontend_ui",
+          "memory_system",
+          "footprint_system",
+          "worldbook_system",
+          "context_manager"
+        ]
+      },
+      "3": {
+        "count": 4,
+        "modules": [
+          "context_panel",
+          "auto_summary",
+          "plugin_system",
+          "agent_tools"
+        ]
+      },
+      "2": {
+        "count": 4,
+        "modules": [
+          "authors_note",
+          "time_weather",
+          "model_plaza",
+          "context_log"
+        ]
+      },
+      "1": {
+        "count": 0,
+        "modules": []
+      }
+    }
+  },
+  "upgrade_path": {
+    "target_version": "4.0.0",
+    "current_version": "3.5.0",
+    "phases": [
+      {
+        "phase": 1,
+        "name": "稳定性与容错增强",
+        "duration": "1周",
+        "tasks": [
+          {
+            "module": "llm_service",
+            "task": "增强JSON解析容错性",
+            "priority": "critical",
+            "current_status": "已完成 (v3.5.0)"
+          },
+          {
+            "module": "smart_parse",
+            "task": "完善多策略降级系统",
+            "priority": "high",
+            "current_status": "已完成 (v3.5.0)"
+          },
+          {
+            "module": "database",
+            "task": "添加连接池监控",
+            "priority": "medium",
+            "current_status": "待实施"
+          }
+        ]
+      },
+      {
+        "phase": 2,
+        "name": "性能优化与资源管理",
+        "duration": "2周",
+        "tasks": [
+          {
+            "module": "context_manager",
+            "task": "优化Token预算算法",
+            "priority": "high",
+            "current_status": "规划中"
+          },
+          {
+            "module": "auto_extract",
+            "task": "智能调度减少API调用",
+            "priority": "medium",
+            "current_status": "规划中"
+          },
+          {
+            "module": "frontend_ui",
+            "task": "懒加载和代码分割",
+            "priority": "medium",
+            "current_status": "待实施"
+          }
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "新功能与体验提升",
+        "duration": "3周",
+        "tasks": [
+          {
+            "module": "footprint_system",
+            "task": "图谱交互增强（拖拽编辑）",
+            "priority": "high",
+            "current_status": "需求收集"
+          },
+          {
+            "module": "agent_tools",
+            "task": "新增剧情分支可视化",
+            "priority": "medium",
+            "current_status": "概念阶段"
+          },
+          {
+            "module": "plugin_system",
+            "task": "插件市场功能",
+            "priority": "low",
+            "current_status": "远期规划"
+          }
+        ]
+      },
+      {
+        "phase": 4,
+        "name": "架构现代化与技术升级",
+        "duration": "4周",
+        "tasks": [
+          {
+            "module": "database",
+            "task": "迁移到PostgreSQL（可选）",
+            "priority": "low",
+            "current_status": "评估中"
+          },
+          {
+            "module": "all",
+            "task": "微服务架构拆分（可选）",
+            "priority": "optional",
+            "current_status": "概念验证"
+          },
+          {
+            "module": "all",
+            "task": "Docker容器化部署",
+            "priority": "medium",
+            "current_status": "文档编写中"
+          }
+        ]
+      }
+    ],
+    "estimated_effort": "约10周（并行开发可缩短至6-7周）",
+    "risks": [
+      {
+        "risk": "API兼容性问题",
+        "probability": "medium",
+        "impact": "high",
+        "mitigation": "保持向后兼容，提供迁移指南"
+      },
+      {
+        "risk": "性能回归",
+        "probability": "low",
+        "impact": "medium",
+        "mitigation": "完善的测试覆盖和性能基准"
+      },
+      {
+        "risk": "用户适应成本",
+        "probability": "high",
+        "impact": "low",
+        "mitigation": "渐进式发布，保留旧版入口"
+      }
+    ],
+    "benefits": [
+      "系统可靠性提升至99.9%",
+      "响应速度提升30-50%",
+      "API成本降低20-30%",
+      "用户体验显著改善",
+      "可维护性和扩展性大幅提升",
+      "为未来功能奠定基础"
+    ]
+  },
+  "statistics": {
+    "total_modules": 21,
+    "active_modules": 21,
+    "error_modules": 0,
+    "core_modules": 5,
+    "total_dependencies": 28,
+    "avg_dependencies_per_module": 1.33,
+    "modules_with_issues": 1,
+    "recently_updated": 0
+  }
+}
